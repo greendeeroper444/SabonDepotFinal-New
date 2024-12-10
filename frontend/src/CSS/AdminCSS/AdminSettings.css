@@ -1,0 +1,50 @@
+.admin-settings-container{
+    display: flex;
+    padding: 50px 0;
+    max-height: 100%;
+    height: 100vh;
+}
+.settings-sidebar{
+    width: 200px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+}
+  
+.settings-sidebar ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+  
+.settings-sidebar li{
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #333;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+  
+.settings-sidebar li:hover{
+    background-color: #e9ecef;
+}
+  
+.settings-sidebar .active-tab{
+    background-color: #077A37;
+    color: white;
+}
+.settings-content{
+    flex: 1;
+    padding: 20px;
+}
+  
+.settings-content h2{
+    margin-top: 0;
+    color: #333;
+}
+  
+.settings-content h3{
+    color: #555;
+}
+  
