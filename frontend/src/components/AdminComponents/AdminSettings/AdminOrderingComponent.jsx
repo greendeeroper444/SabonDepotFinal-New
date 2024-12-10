@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import '../../../CSS/AdminCSS/AdminSettings/AdminOrderingComponent.css';
+import { orderDate } from '../../../utils/OrderUtils';
 
 function AdminOrderingComponent() {
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
@@ -194,7 +195,7 @@ function AdminOrderingComponent() {
 
 
         <div className='entries-list'>
-            <h3>Uploaded Dates</h3>
+            <h3>Unavailable Dates</h3>
             <table className='entries-table'>
                 <thead>
                     <tr>
@@ -208,7 +209,7 @@ function AdminOrderingComponent() {
                         dates.map((entry, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
-                            <td>{entry.date}</td>
+                            <td>{orderDate(entry.date)}</td>
                             <td>
                                 <button onClick={() => handleDeleteDate(entry._id)}>Delete</button>
                                     {/* {' '}
@@ -220,7 +221,7 @@ function AdminOrderingComponent() {
                 </tbody>
             </table>
 
-            <h3>Uploaded Times</h3>
+            <h3>Available Times</h3>
             <table className='entries-table'>
                 <thead>
                     <tr>

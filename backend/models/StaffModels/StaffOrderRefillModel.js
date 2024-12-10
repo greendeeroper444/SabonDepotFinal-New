@@ -29,6 +29,8 @@ const StaffOrderRefillSchema = new mongoose.Schema({
             imageUrl: String,
             sizeUnit:  String,
             productSize: String,
+            description: String,
+            refillPrice: Number,
             createdProductBy: String,
             createdProductAt: Date,
             updatedProductBy: String,
@@ -38,6 +40,14 @@ const StaffOrderRefillSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         required: true,
+    },
+    cashReceived: {
+        type: Number,
+        default: 0
+    },
+    changeTotal: {
+        type: Number,
+        default: 0
     },
     createdAt: {
         type: Date,

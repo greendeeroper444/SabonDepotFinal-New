@@ -10,7 +10,7 @@ const StaffOrderRefillModel = require("../../models/StaffModels/StaffOrderRefill
 //create order via staff
 const addOrderRefillStaff = async(req, res) => {
     try {
-        const {staffId} = req.body;
+        const {staffId, cashReceived, changeTotal} = req.body;
         const token = req.cookies.token;
     
         if(!token){
@@ -50,7 +50,7 @@ const addOrderRefillStaff = async(req, res) => {
             // }, 0);
             //calculate raw total amount
             const rawTotalAmount = cartItems.reduce((acc, item) => {
-                return acc + item.productId.price * item.quantity;
+                return acc + item.productId.refillPrice * item.quantity;
             }, 0);
 
             //apply discount logic
@@ -80,12 +80,16 @@ const addOrderRefillStaff = async(req, res) => {
                     imageUrl: item.productId.imageUrl,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     createdProductBy: item.productId.createdBy,
                     createdProductAt: item.productId.createdAt,
                     updatedProductBy: item.productId.updatedBy,
                     updatedProductAt: item.productId.updatedAt,
                 })),
                 totalAmount,
+                cashReceived,
+                changeTotal,
             });
     
             await order.save();

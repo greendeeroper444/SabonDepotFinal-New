@@ -190,6 +190,7 @@ function CustomerShopProductDetails() {
 
                             <div className='customer-shop-product-details-content-right-header'>
                                 <h1>{`${product.productName} (${product.productSize})`}</h1>
+                                <p>{product.description}</p>
                                 {/* <h4>{product.productSize}</h4> */}
                                 <div className='price-container'>
                                 {
@@ -215,7 +216,6 @@ function CustomerShopProductDetails() {
                                     {renderStars(rating)}
                                     <span className='customer-review'>5 Customer Review</span>
                                 </div> */}
-                                {/* <p>Description</p> */}
                             </div>
 
                             <div className='customer-shop-product-details-content-right-content'>

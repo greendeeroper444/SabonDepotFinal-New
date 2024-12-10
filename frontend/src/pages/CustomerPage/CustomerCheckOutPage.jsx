@@ -180,13 +180,13 @@ function CustomerCheckOutPage() {
                         <span>Subtotal</span>
                         <span>{`₱ ${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>
                     </div>
-                    <div className='shipping'>
+                    {/* <div className='shipping'>
                         <span>Shipping</span>
                         <span>50</span>
-                    </div>
+                    </div> */}
                     <div className='total'>
                         <span>Total</span>
-                        <span>{`₱ ${(total + 50).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>
+                        <span>{`₱ ${(total).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>
                     </div>
                 </div>
 
@@ -243,7 +243,7 @@ function CustomerCheckOutPage() {
             showCashOnDeliveryModal && (
                 <CustomerCashOnDeliveryPaymentMethod
                 onClose={() => setShowCashOnDeliveryModal(false)}
-                defaultPartialAmount={(total + 50).toLocaleString('en-US', { 
+                defaultPartialAmount={(total).toLocaleString('en-US', { 
                     minimumFractionDigits: 2, 
                     maximumFractionDigits: 2 
                 })}

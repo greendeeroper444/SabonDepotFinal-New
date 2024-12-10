@@ -1,150 +1,91 @@
-.staff-payment-method-modal-container{
+
+.staff-payment-container-overlay{
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     z-index: 1000;
 }
-
-.staff-payment-method-modal-container .staff-payment-method-modal-content{
-    background: white;
+  
+.staff-payment-container-content{
+    background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 90%;
     text-align: center;
-    height: 500px;
-    overflow-y: auto;
+    animation: fadeIn 0.3s ease-in-out;
 }
-
-.staff-payment-method-modal-container .modal-close{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
+  
+.staff-payment-container-content h2{
+    margin: 0 0 15px;
+    font-size: 1.5rem;
+    color: #333;
 }
-
-.staff-payment-method-modal-container .modal-body{
-    padding: 20px;
-}
-
-.staff-payment-method-modal-container .modal-header{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.staff-payment-method-modal-container .modal-icon{
-    font-size: 40px;
+  
+.staff-payment-container-content label{
+    display: block;
     margin-bottom: 10px;
+    font-size: 1rem;
+    color: #555;
 }
-
-.staff-payment-method-modal-container .modal-icon.success-icon{
-    color: green;
+  
+.staff-payment-container-content input{
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
-
-.staff-payment-method-modal-container .modal-icon.pending-icon{
-    color: yellow;
+  
+.staff-payment-container-content button{
+    padding: 10px 20px;
+    margin: 10px 5px 0;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
-
-.staff-payment-method-modal-container .modal-header h2{
-    margin: 10px 0;
-}
-
-.staff-payment-method-modal-container .modal-header p{
-    color: #666;
-}
-
-.staff-payment-method-modal-container .payment-total{
-    margin: 20px 0;
-}
-
-.staff-payment-method-modal-container .payment-proof{
-    margin: 20px 0;
-}
-
-.staff-payment-method-modal-container .payment-proof img{
-    width: 350px;
-    height: 350px;
-    object-fit: contain;
-}
-
-
-.staff-payment-method-modal-container .payment-total h3{
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.staff-payment-method-modal-container .payment-total p{
-    font-size: 24px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.staff-payment-method-modal-container .payment-details{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 10px 0px;
-}
-
-.staff-payment-method-modal-container .detail{
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 5px;
-}
-
-.staff-payment-method-modal-container .detail span{
-    font-size: 14px;
-}
-
-.staff-payment-method-modal-container .detail span:last-child{
-    font-weight: bold;
-}
-
-.staff-payment-method-modal-container .modal-footer{
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 5px;
-}
-
-.staff-payment-method-modal-container .modal-footer .approve-button{
-    padding: 10px 10px;
+  
+.staff-payment-container-content button:first-of-type{
     background-color: #077A37;
-    border: none;
     color: #fff;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: 1px solid #077A37;
 }
-
-.staff-payment-method-modal-container .modal-footer .approve-button:disabled{
-    background-color: #aaa;
-    cursor: not-allowed;
+  
+.staff-payment-container-content button:first-of-type:hover{
+    background-color: #ffff;
+    color: #077A37;
 }
-
-.staff-payment-method-modal-container .modal-footer .decline-button{
-    padding: 10px 10px;
-    background-color: #EC5A5A;
-    border: none;
+  
+.staff-payment-container-content button:last-of-type{
+    background-color: #ffff;
+    color: #077A37;
+    border: 1px solid #077A37;
+}
+  
+.staff-payment-container-content button:last-of-type:hover{
+    background-color: #077A37;
     color: #fff;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
-
-.staff-payment-method-modal-container .modal-footer .decline-button:hover{
-    background-color: #d94a4a;
+  
+@keyframes fadeIn{
+    from{
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
 }
+  

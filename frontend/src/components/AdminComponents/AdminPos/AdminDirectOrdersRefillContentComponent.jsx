@@ -45,7 +45,7 @@ function AdminDirectOrdersRefillContentComponent({
             {
                 paginatedProducts.map((product, index) => {
                     const shouldShowDiscount = IsDiscountValidUtils(admin) && product.discountPercentage > 0;
-                    const finalPrice = shouldShowDiscount ? product.discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const finalPrice = shouldShowDiscount ? product.discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : product.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
                     return (
                         <li key={product._id}>

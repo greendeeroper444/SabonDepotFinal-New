@@ -443,10 +443,10 @@ function CustomerCartPage() {
                             }`}
                         </span>
                     </div>
-                    <div className='totals-item'>
+                    {/* <div className='totals-item'>
                         <span>Shipping Fee</span>
                         <span>₱ 50.00</span>
-                    </div>
+                    </div> */}
                     <div className='totals-total'>
                         <span>Total</span>
                         <span>
@@ -456,7 +456,7 @@ function CustomerCartPage() {
                                         ? item.productId.price * 0.7
                                         : item.discountedPrice;
                                     return acc + price * item.quantity;
-                                }, 50).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                }, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                             }`}
                         </span>
                     </div>

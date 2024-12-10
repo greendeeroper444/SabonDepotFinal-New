@@ -68,6 +68,12 @@ const ProductSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    description: {
+        type: String,
+    },
+    refillPrice: {
+        type: Number
+    },
     createdBy: {
         type: String,
         required: true,

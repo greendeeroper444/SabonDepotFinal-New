@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import '../../CSS/StaffCSS/StaffOrders.css';
-import editIcon from '../../assets/staff/stafficons/staff-orders-edit-icon.png';
 import searchIcon from '../../assets/staff/stafficons/staff-orders-search-icon.png';
 import calendarIcon from '../../assets/staff/stafficons/staff-orders-calendar-icon.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 import StaffAllOrders from '../../components/StaffComponents/StaffOrders/StaffAllOrders';
 import StaffOnDeliveryOrders from '../../components/StaffComponents/StaffOrders/StaffOnDeliveryOrders';
 import StaffDeliveredOrders from '../../components/StaffComponents/StaffOrders/StaffDeliveredOrders';
-import StaffCanceledOrders from '../../components/StaffComponents/StaffOrders/StaffCanceledOrders';
 import { orderDate } from '../../utils/OrderUtils';
 import StaffConfirmedOrders from '../../components/StaffComponents/StaffOrders/StaffConfirmedOrders';
 import StaffUnconfirmedOrders from '../../components/StaffComponents/StaffOrders/StaffUnconfirmedOrders';

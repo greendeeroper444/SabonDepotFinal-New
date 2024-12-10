@@ -45,7 +45,10 @@ function StaffDirectOrdersRefillContentComponent({
             {
                 paginatedProducts.map((product, index) => {
                     const shouldShowDiscount = IsDiscountValidUtils(staff) && product.discountPercentage > 0;
-                    const finalPrice = shouldShowDiscount ? product.discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const finalPrice = product.refillPrice 
+                    ? product.refillPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
+                    : 'N/A';
+
 
                     return (
                         <li key={product._id}>

@@ -11,8 +11,8 @@ import { calculateFinalPriceModal, calculateFinalPriceModalStaff, calculateSubto
 
 function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, setCartItems, staffId}) {
     const navigate = useNavigate();
-
-    const [sizeSelection, setSizeSelection] = useState({});
+    const [cashReceived, setCashReceived] = useState('');
+    const [changeTotal, setChangeTotal] = useState(0);
 
     //handle quantity change
     const handleQuantityChange = async(cartItemId, newQuantity) => {
@@ -58,6 +58,8 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                 })),
                 // totalAmount: calculateSubtotalModalStaff(cartItems),
                 totalAmount: parseFloat(finalSubtotal.replace(/,/g, '')),
+                cashReceived,
+                changeTotal,
             };
 
             const response = await axios.post('/staffOrderWalkin/addOrderWalkinStaff', orderData);
@@ -101,18 +103,25 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
         }
     };
 
+    // 
+    const handleCashReceivedChange = (value) => {
+        const receivedValue = parseFloat(value) || '';
+    
+        setCashReceived(receivedValue);
+    
+        //get the final subtotal as a number by removing '₱' and commas
+        const {finalSubtotal} = calculateSubtotalModalStaff(cartItems);
+        const numericSubtotal = parseFloat(finalSubtotal.replace(/₱|,/g, '')) || 0;
+    
+        const change = receivedValue - numericSubtotal;
+        setChangeTotal(change);
+    };
+    
     useEffect(() => {
         if(isOpen && staffId){
             fetchCartItems();
         }
     }, [isOpen, staffId]);
-
-    const handleSizeChange = (cartItemId, selectedSize) => {
-        setSizeSelection((prev) => ({
-            ...prev,
-            [cartItemId]: selectedSize,
-        }));
-    };
 
     if(!isOpen) return null;
 
@@ -147,28 +156,15 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                                         <div className='customer-modal-product-items-content'>
                                             <span>{cartItem.productId.productName}</span>
 
-                                            {/* dropdown for size options */}
-                                            {/* <select
-                                            className='size-select'
-                                            value={sizeSelection[cartItem._id] || ''}
-                                            onChange={(e) => handleSizeChange(cartItem._id, e.target.value)}
-                                            >
-                                                <option value='' disabled>
-                                                    {cartItem.productId.sizeUnit}
-                                                </option>
-                                                <option value={cartItem.productId.productSize}>
-                                                    {cartItem.productId.productSize}
-                                                </option>
-                                            </select> */}
                                             <p style={{ fontSize: '12px' }}>{cartItem.productId.productSize}</p>
 
                                             <p>
                                                 <input
-                                                    type='number'
-                                                    value={cartItem.quantity}
-                                                    min='1'
-                                                    onChange={(e) => handleQuantityChange(cartItem._id, parseInt(e.target.value))}
-                                                    className='input-quantity-update'
+                                                type='number'
+                                                value={cartItem.quantity}
+                                                min='1'
+                                                onChange={(e) => handleQuantityChange(cartItem._id, parseInt(e.target.value))}
+                                                className='input-quantity-update'
                                                 />
                                                 <span>X</span>
                                                 <span>{`₱ ${calculateFinalPriceModalStaff(cartItem)}`}</span>
@@ -203,6 +199,19 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                     <div className='products-subtotal'>
                         <span>Total:</span>
                         <span> ₱ {calculateSubtotalModalStaff(cartItems).finalSubtotal}</span>
+                    </div>
+                    <div className='products-subtotal'>
+                        <span>Cash:</span>
+                        <input
+                            type='number'
+                            min='1'
+                            value={cashReceived}
+                            onChange={(e) => handleCashReceivedChange(e.target.value)}
+                        />
+                    </div>
+                    <div className='products-subtotal'>
+                        <span>Change:</span>
+                        <span> ₱ {changeTotal.toFixed(2)}</span>
                     </div>
                 </div>
 

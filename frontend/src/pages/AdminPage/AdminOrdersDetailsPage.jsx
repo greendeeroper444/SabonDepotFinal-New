@@ -68,72 +68,47 @@ function AdminOrdersDetailsPage() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <h1>Order # {order._id}</h1>
                 <div className='order-status'>
-                {
-                    order.isReceived ? (
-                        <span>Order Completed</span>
-                    ) : (
-                        <span>Order Not Completed</span>
-                    )
-                }
+                    {
+                        order.isReceived ? (
+                            <span>Order Completed</span>
+                        ) : (
+                            <span>Order Not Completed</span>
+                        )
+                    }
                 </div>
             </div>
             <div className='order-actions'>
-                {
-                    order.paymentMethod === 'Pick Up' && (
-                        <>
-                            <button
-                            className={`order-actions-button ready ${getStatusClass('isReady', order) === 'isReady' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isReady')}
-                            >
-                                Ready
-                            </button>
-                            <button
-                            className={`order-actions-button pickedup ${getStatusClass('isPickedUp', order) === 'isPickedUp' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isPickedUp')}
-                            >
-                                Picked Up
-                            </button>
-                        </>
-                    )
-                }
-                {
-                    order.paymentMethod !== 'Pick Up' && (
-                        <>
-                            <button
-                            className={`order-actions-button shipped ${getStatusClass('isShipped', order) === 'isShipped' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isShipped')}
-                            >
-                                Shipped
-                            </button>
-                            <button
-                            className={`order-actions-button outForDelivery ${getStatusClass('isOutForDelivery', order) === 'isOutForDelivery' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isOutForDelivery')}
-                            >
-                                Out For Delivery
-                            </button>
-                            <button
-                            className={`order-actions-button delivered ${getStatusClass('isDelivered', order) === 'isDelivered' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isDelivered')}
-                            >
-                                Delivered
-                            </button>
-                        </>
-                    )
-                }
+                <button
+                className={`order-actions-button shipped ${getStatusClass('isShipped', order) === 'isShipped' ? 'active' : ''}`}
+                onClick={() => handleStatusUpdate('isShipped')}
+                >
+                    Shipped
+                </button>
+                <button
+                className={`order-actions-button outForDelivery ${getStatusClass('isOutForDelivery', order) === 'isOutForDelivery' ? 'active' : ''}`}
+                onClick={() => handleStatusUpdate('isOutForDelivery')}
+                >
+                    Out For Delivery
+                </button>
+                <button
+                className={`order-actions-button delivered ${getStatusClass('isDelivered', order) === 'isDelivered' ? 'active' : ''}`}
+                onClick={() => handleStatusUpdate('isDelivered')}
+                >
+                    Delivered
+                </button>
             </div>
         </div>
 
         <div className='order-dates'>
-            <p><strong>Paid on:</strong> {order.paidDate ? new Date(order.paidDate).toLocaleDateString() : 'N/A'}</p>
             <p><strong>Placed on:</strong> {orderDate(order.createdAt)}</p>
-            <p><strong>Updated:</strong> {new Date(order.updatedAt).toLocaleDateString()}</p>
+            <p><strong>Paid on:</strong> {orderDate(order.deliveredDate ? new Date(order.deliveredDate).toLocaleDateString() : 'N/A')}</p>
         </div>
 
         <div className='order-info'>
             <div className='order-section'>
                 <h3 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Customer & Order</span> 
-                    <img src={editIcon} alt='Edit Icon' className='edit-icon' />
+                    {/* <img src={editIcon} alt='Edit Icon' className='edit-icon' /> */}
                 </h3>
                 <p>
                     <strong>Name:</strong>
@@ -150,7 +125,7 @@ function AdminOrdersDetailsPage() {
             <div className='order-section'>
                 <h3 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Shipping Address</span> 
-                    <img src={editIcon} alt='Edit Icon' className='edit-icon' />
+                    {/* <img src={editIcon} alt='Edit Icon' className='edit-icon' /> */}
                 </h3>
                 <p>{order.billingDetails.province}</p>
                 <p>{order.billingDetails.city}</p>
@@ -160,7 +135,7 @@ function AdminOrdersDetailsPage() {
             <div className='order-section'>
                 <h3 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Billing Address</span> 
-                    <img src={editIcon} alt='Edit Icon' className='edit-icon' />
+                    {/* <img src={editIcon} alt='Edit Icon' className='edit-icon' /> */}
                 </h3>
                 <p>{order.billingDetails.city}</p>
             </div>

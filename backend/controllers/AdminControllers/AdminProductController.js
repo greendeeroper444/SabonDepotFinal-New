@@ -50,7 +50,21 @@ const uploadProductAdmin = async(req, res) => {
         }
 
         try {
-            const {productCode, productName, category, price, quantity, stockLevel, discountPercentage = 0, discountedDate, sizeUnit, productSize, expirationDate} = req.body;
+            const {
+                productCode, 
+                productName, 
+                category, 
+                price, 
+                quantity, 
+                stockLevel, 
+                discountPercentage = 0, 
+                discountedDate, 
+                sizeUnit, 
+                productSize, 
+                expirationDate,
+                description,
+                refillPrice
+            } = req.body;
             const imageUrl = req.file ? req.file.path : '';
 
             if(!productCode || !productName || !category || !price || !quantity || !stockLevel || !imageUrl || !productSize || !expirationDate){
@@ -120,6 +134,8 @@ const uploadProductAdmin = async(req, res) => {
                     uploaderId: adminId,
                     uploaderType: 'Admin',
                     expirationDate,
+                    description,
+                    refillPrice,
                     createdBy: adminExists.fullName
                 });
 
@@ -186,7 +202,21 @@ const editProductAdmin = async(req, res) => {
 
         try {
             const {productId} = req.params;
-            const {productCode, productName, category, price, quantity, stockLevel, discountPercentage = 0, discountedDate, sizeUnit, productSize, expirationDate} = req.body;
+            const {
+                productCode, 
+                productName, 
+                category, 
+                price, 
+                quantity, 
+                stockLevel, 
+                discountPercentage = 0, 
+                discountedDate, 
+                sizeUnit, 
+                productSize, 
+                expirationDate,
+                description,
+                refillPrice
+            } = req.body;
             const imageUrl = req.file ? req.file.path : '';
 
             if(!productCode || !productName || !category || !price || !stockLevel || !productSize || !expirationDate){
@@ -229,6 +259,8 @@ const editProductAdmin = async(req, res) => {
             product.productSize = productSize;
             product.expirationDate = expirationDate;
             product.discountedDate = discountedDate;
+            product.description = description;
+            product.refillPrice = refillPrice;
             if(imageUrl){
                 product.imageUrl = imageUrl;
             }

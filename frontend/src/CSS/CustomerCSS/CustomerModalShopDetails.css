@@ -125,7 +125,8 @@
 
 .customer-modal-footer{
     padding: 10px 20px;
-    margin-top: 50px;
+    margin-top: 10px;
+    line-height: 1px;
 }
 
 .customer-modal-footer .products-subtotal{

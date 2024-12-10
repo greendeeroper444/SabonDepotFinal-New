@@ -19,6 +19,7 @@ import AdminOrdersPickupPage from '../pages/AdminPage/AdminOrdersPickupPage'
 import AdminQuickSalesPage from '../pages/AdminPage/AdminQuickSalesPage'
 import AdminOrderSummaryPage from '../pages/AdminPage/AdminOrderSummaryPage'
 import AdminSettingsPage from '../pages/AdminPage/AdminSettingsPage'
+import AdminOrdersPickupDetailsPage from '../pages/AdminPage/AdminOrdersPickupDetails'
 
 function AdminRoutes({adminToggleSidebar, adminCloseSidebar, adminSidebarVisible}) {
   return (
@@ -34,6 +35,7 @@ function AdminRoutes({adminToggleSidebar, adminCloseSidebar, adminSidebarVisible
                 <Route path='/admin/orders' element={<AdminOrdersPage />} />
                 <Route path='/admin/orders-pickup' element={<AdminOrdersPickupPage />} />
                 <Route path='/admin/orders/details/:orderId' element={<AdminOrdersDetailsPage />} />
+                <Route path='/admin/orders-pickup/details/:orderId' element={<AdminOrdersPickupDetailsPage />} />
                 <Route path='/admin/walkins' element={<AdminOrdersWalkinPage />} />
                 <Route path='/admin/refills' element={<AdminOrdersRefillPage />} />
                 <Route path='/admin/inventory/finished-product' element={<AdminFinishedProductPage />} />

@@ -18,7 +18,9 @@ function AdminModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
         productSize: '',
         sizeUnit: '',
         expirationDate: '',
-        updatedAt: ''
+        updatedAt: '',
+        description: '',
+        refillPrice: '',
     });
     const [inputValue, setInputValue] = useState(0); 
 
@@ -40,6 +42,8 @@ function AdminModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
         formData.append('sizeUnit', dataInput.sizeUnit);
         formData.append('expirationDate', dataInput.expirationDate);
         formData.append('updatedAt', dataInput.updatedAt);
+        formData.append('description', dataInput.description);
+        formData.append('refillPrice', dataInput.refillPrice);
         if(selectedImage && typeof selectedImage !== 'string'){
             formData.append('image', selectedImage);
         }
@@ -61,7 +65,7 @@ function AdminModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
 
     useEffect(() => {
         if(selectedProduct){
-            const {productCode, productName, category, price, quantity, stockLevel, imageUrl, discountPercentage, discountedDate, productSize, sizeUnit, expirationDate, updatedAt} = selectedProduct;
+            const {productCode, productName, category, price, quantity, stockLevel, imageUrl, discountPercentage, discountedDate, productSize, sizeUnit, expirationDate, updatedAt, description, refillPrice} = selectedProduct;
             setDataInput({
                 productCode: productCode || '',
                 productName: productName || '',
@@ -74,7 +78,9 @@ function AdminModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
                 productSize: productSize || '',
                 sizeUnit: sizeUnit || '',
                 expirationDate: expirationDate ? new Date(expirationDate).toISOString().split('T')[0] : '',
-                updatedAt: updatedAt ? new Date(updatedAt).toISOString().split('T')[0] : ''
+                updatedAt: updatedAt ? new Date(updatedAt).toISOString().split('T')[0] : '',
+                description: description || '',
+                refillPrice: refillPrice || ''
             });
             setSelectedImage(imageUrl || null);
         }
@@ -320,6 +326,24 @@ function AdminModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
                     type="date"
                     value={dataInput.updatedAt}
                     onChange={(e) => setDataInput({...dataInput, updatedAt: e.target.value})}
+                    />
+                </div>
+            </div>
+            <div className='label-text'>
+                <label>REFILL PRICE:</label>
+                <div>
+                    <input type="number"
+                    value={dataInput.refillPrice} 
+                    onChange={(e) => setDataInput({...dataInput, refillPrice: e.target.value})} 
+                    />
+                </div>
+            </div>
+            <div className='label-text'>
+                <label>DESCRIPTION:</label>
+                <div>
+                    <textarea
+                        value={dataInput.description} 
+                        onChange={(e) => setDataInput({...dataInput, description: e.target.value})}
                     />
                 </div>
             </div>

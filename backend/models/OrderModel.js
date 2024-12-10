@@ -26,6 +26,8 @@ const OrderSchema = new mongoose.Schema({
             imageUrl: String,
             sizeUnit:  String,
             productSize: String,
+            sizeUnit:  String,
+            productSize: String,
             createdProductBy: String,
             createdProductAt: Date,
             updatedProductBy: String,
@@ -45,6 +47,14 @@ const OrderSchema = new mongoose.Schema({
     overallPaid: {
         type: Number,
         default: 0,
+    },
+    cashReceived: {
+        type: Number,
+        default: 0
+    },
+    changeTotal: {
+        type: Number,
+        default: 0
     },
     paymentMethod: {
         type: String,
@@ -165,7 +175,7 @@ OrderSchema.pre('save', function(next){
      if (this.paymentMethod === 'Pick Up') {
         if (this.isDelivered) {
             this.orderStatus = 'Picked Up';
-        } else if (this.isPending) {
+        } else if (this.isReady) {
             this.orderStatus = 'Ready';
         } else {
             this.orderStatus = 'Pending';

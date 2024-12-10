@@ -31,7 +31,7 @@ function AdminOrdersPickupPage() {
 
 
     const handleRowClick = (orderId) => {
-        navigate(`/admin/orders/details/${orderId}`);
+        navigate(`/admin/orders-pickup/details/${orderId}`);
     };
 
     useEffect(() => {
@@ -95,7 +95,7 @@ function AdminOrdersPickupPage() {
 
         switch (activeTab) {
             case 'All Orders':
-                return <StaffAllOrders orders={displayedOrders} handleRowClick={handleRowClick} orderDate={orderDate} />;
+                return <StaffAllOrdersPickup orders={displayedOrders} handleRowClick={handleRowClick} orderDate={orderDate} />;
             case 'Pending':
                 return <StaffUnconfirmedOrders orders={displayedOrders.filter(order => order.orderStatus === 'Pending')} handleRowClick={handleRowClick} orderDate={orderDate} />;
             case 'Ready':

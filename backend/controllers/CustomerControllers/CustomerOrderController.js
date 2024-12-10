@@ -677,7 +677,7 @@ const createOrderCustomer = async(req, res) => {
 
         //calculate total amount
         const totalAmount = cartItems.reduce((acc, item) => {
-            const originalPrice = item.productId.price;
+            const originalPrice = item.productId.discountedPrice;
             let discountedPrice = originalPrice;
 
             //calculate discounted price
@@ -700,7 +700,7 @@ const createOrderCustomer = async(req, res) => {
             return acc + finalPrice * item.quantity;
         }, 0);
 
-        const shippingCost = 50;
+        const shippingCost = 0;
         const totalAmountWithShipping = totalAmount + shippingCost;
 
         let order;
@@ -724,6 +724,8 @@ const createOrderCustomer = async(req, res) => {
                     imageUrl: item.productId.imageUrl,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     createdProductBy: item.productId.createdBy,
                     createdProductAt: item.productId.createdAt,
                     updatedProductBy: item.productId.updatedBy,
@@ -756,6 +758,8 @@ const createOrderCustomer = async(req, res) => {
                     imageUrl: item.productId.imageUrl,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     createdProductBy: item.productId.createdBy,
                     createdProductAt: item.productId.createdAt,
                     updatedProductBy: item.productId.updatedBy,
@@ -820,6 +824,8 @@ const createOrderCustomer = async(req, res) => {
                     quantitySold: item.quantity,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     lastSoldAt: Date.now(),
                 });
             }

@@ -17,7 +17,29 @@ function AdminDashboardPage() {
         pending: 0,
     });
     const [searchQuery, setSearchQuery] = useState('');
+    const [notifications, setNotifications] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
 
+    const checkProductStock = async() => {
+        try {
+            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin'); 
+            const lowStockProducts = response.data;
+            const newNotifications = lowStockProducts.map(product => 
+                `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`
+            );
+            setNotifications(newNotifications);
+            setShowAlert(true);
+        } catch (error) {
+            console.error('Error fetching out-of-stock products:', error);
+        }
+    };
+
+    useEffect(() => {
+        checkProductStock();
+    }, []);
+    const closeAlert = () => {
+        setShowAlert(false);
+    };
     useEffect(() => {
         const fetchOrderCounts = async() => {
             try {
@@ -191,6 +213,21 @@ function AdminDashboardPage() {
 
   return (
     <div className='admin-dashboard-container'>
+        {
+            showAlert && (
+                <div className='alert-message'>
+                    <button className='close-alert' onClick={closeAlert}>
+                        ×
+                    </button>
+                    <ul>
+                        {notifications.map((notification, index) => (
+                            <li key={index}>{notification}</li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
         <div className='admin-dashboard-first'>
             <div className='admin-top-sales'>
                 <h3>Top Sales</h3>

@@ -33,7 +33,7 @@ export default function UseDirectCheckOutHook(customerId, selectedItems, navigat
                     customer?.isNewCustomer && new Date(customer?.newCustomerExpiresAt) > new Date()
                         ? item.productId.price * 0.7
                         : item.discountedPrice || item.productId.discountedPrice;
-                if (isNaN(price) || isNaN(item.quantity)) {
+                if(isNaN(price) || isNaN(item.quantity)){
                     console.error('Invalid price or quantity detected', item);
                 }
                 return acc + price * item.quantity;

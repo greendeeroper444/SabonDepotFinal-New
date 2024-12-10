@@ -31,7 +31,7 @@ function StaffOrdersPickupPage() {
 
 
     const handleRowClick = (orderId) => {
-        navigate(`/staff/orders/details/${orderId}`);
+        navigate(`/staff/orders-pickup/details/${orderId}`);
     };
 
     useEffect(() => {
@@ -95,7 +95,7 @@ function StaffOrdersPickupPage() {
 
         switch (activeTab) {
             case 'All Orders':
-                return <StaffAllOrders orders={displayedOrders} handleRowClick={handleRowClick} orderDate={orderDate} />;
+                return <StaffAllOrdersPickup orders={displayedOrders} handleRowClick={handleRowClick} orderDate={orderDate} />;
             case 'Pending':
                 return <StaffUnconfirmedOrders orders={displayedOrders.filter(order => order.orderStatus === 'Pending')} handleRowClick={handleRowClick} orderDate={orderDate} />;
             case 'Ready':

@@ -39,8 +39,8 @@ function CustomerPlaceOrderPage() {
 
     const statusDates = {
         Pending: order.createdAt,
-        Ready: order.shippedDate,
-        PickedUp: order.outForDeliveryDate,
+        Ready: order.readyDate,
+        PickedUp: order.pickedUpDate,
         Shipped: order.shippedDate,
         OutForDelivery: order.outForDeliveryDate,
         Delivered: order.deliveredDate,
@@ -126,10 +126,10 @@ function CustomerPlaceOrderPage() {
                 <span>Subtotal</span>
                 <span> {`₱${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>
             </div>
-            <div className='summary-item' style={{ color: 'red' }}>
+            {/* <div className='summary-item' style={{ color: 'red' }}>
                 <span>Shipping</span>
                 <span> {`₱${shippingCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>
-            </div>
+            </div> */}
             <div className='customer-place-order-total'>
                 <span>Total</span>
                 <span> {`₱${order.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</span>

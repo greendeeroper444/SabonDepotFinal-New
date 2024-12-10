@@ -17,7 +17,9 @@ function AdminModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
         discountedDate: '',
         productSize: '',
         sizeUnit: '',
-        expirationDate: ''
+        expirationDate: '',
+        description: '',
+        refillPrice: ''
     })
 
     const handleFileInputClick = () => {
@@ -35,7 +37,7 @@ function AdminModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
 
     const handleUploadProductAdmin = async(e) => {
         e.preventDefault();
-        const {productCode, productName, category, price, quantity, stockLevel, discountPercentage, discountedDate, productSize, sizeUnit, expirationDate} = dataInput;
+        const {productCode, productName, category, price, quantity, stockLevel, discountPercentage, discountedDate, productSize, sizeUnit, expirationDate, description, refillPrice} = dataInput;
 
         if(!productCode || !productName || !category || !price || !quantity || !stockLevel || !stockLevel || !productSize || !sizeUnit || !expirationDate){
             toast.error('Please input all fields');
@@ -55,6 +57,8 @@ function AdminModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
         formData.append('productSize', productSize);
         formData.append('sizeUnit', sizeUnit);
         formData.append('expirationDate', expirationDate);
+        formData.append('description', description);
+        formData.append('refillPrice', refillPrice);
         try {
             const response = await axios.post('/adminProduct/uploadProductAdmin', formData, {
                 headers: { 
@@ -76,7 +80,9 @@ function AdminModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
                     discountedDate: '',
                     productSize: '',
                     sizeUnit: '',
-                    expirationDate: ''
+                    expirationDate: '',
+                    description: '',
+                    refillPrice: ''
                 })
                 toast.success(response.data.message);
                 onClose();
@@ -292,6 +298,24 @@ function AdminModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
                     type="date"
                     value={dataInput.expirationDate}
                     onChange={(e) => setDataInput({...dataInput, expirationDate: e.target.value})}
+                    />
+                </div>
+            </div>
+            <div className='label-text'>
+                <label>REFILL PRICE:</label>
+                <div>
+                    <input type="number"
+                    value={dataInput.refillPrice} 
+                    onChange={(e) => setDataInput({...dataInput, refillPrice: e.target.value})} 
+                    />
+                </div>
+            </div>
+            <div className='label-text'>
+                <label>DESCRIPTION:</label>
+                <div>
+                    <textarea
+                        value={dataInput.description} 
+                        onChange={(e) => setDataInput({...dataInput, description: e.target.value})}
                     />
                 </div>
             </div>

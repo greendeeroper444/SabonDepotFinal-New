@@ -7,33 +7,57 @@ import StaffPaymentMethodModal from '../../components/StaffComponents/StaffOrder
 import { getStatusClass, orderDate } from '../../utils/OrderUtils';
 import toast from 'react-hot-toast';
 
-function StaffOrdersDetailsPage() {
+function AdminOrdersPickupDetailsPage() {
     const {orderId} = useParams(); 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    //update order status function
-    const handleStatusUpdate = async(status) => {
-        try {
-            const response = await axios.put(`/staffOrders/updateOrderStatusStaff/${orderId}`, {status});
-            setOrder(response.data);
-        } catch (error) {
-            setError(error.message);
-        }
-    };
+    // //update order status function
+    // const handleStatusUpdate = async(status) => {
+    //     try {
+    //         const response = await axios.put(`/staffOrders/updateOrderStatusStaff/${orderId}`, {status});
+    //         setOrder(response.data);
+    //     } catch (error) {
+    //         setError(error.message);
+    //     }
+    // };
 
-    //approve order fucntion
-    const handleApprove = async() => {
+    // //approve order fucntion
+    // const handleApprove = async() => {
+    //     try {
+    //         const response = await axios.put(`/staffOrders/approveOrderStaff/${orderId}`);
+    //         setOrder(response.data);
+    //         setIsModalOpen(false);
+
+    //         toast.success('Your order has been confirmed.');
+    //     } catch (error) {
+    //         setError(error.message);
+    //     }
+    // };
+    const handleStatusUpdate = async(status) => {
+        if(status === 'isPickedUp'){
+            setIsModalOpen(true);
+            return; 
+        }
+        //other statuses
+        await axios.put(`/staffOrders/updateOrderStatusStaff/${orderId}`, {status});
+    };
+    
+    const handleApprove = async(cashReceived, changeTotal) => {
         try {
-            const response = await axios.put(`/staffOrders/approveOrderStaff/${orderId}`);
+            const response = await axios.put(`/staffOrders/updateOrderStatusStaff/${orderId}`, {
+                status: 'isPickedUp',
+                cashReceived,
+                changeTotal,
+            });
             setOrder(response.data);
             setIsModalOpen(false);
-
-            toast.success('Your order has been confirmed.');
+            toast.success('Order marked as picked up!');
         } catch (error) {
-            setError(error.message);
+            console.error(error);
+            toast.error('Failed, you need to input please.');
         }
     };
 
@@ -68,82 +92,35 @@ function StaffOrdersDetailsPage() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <h1>Order # {order._id}</h1>
                 <div className='order-status'>
-                {
-                    order.isReceived ? (
-                        <span>Order Completed</span>
-                    ) : (
-                        <span>Order Not Completed</span>
-                    )
-                }
+                    {
+                        order.isReceived ? (
+                            <span>Order Completed</span>
+                        ) : (
+                            <span>Order Not Completed</span>
+                        )
+                    }
                 </div>
             </div>
             <div className='order-actions'>
-                {/* {
-                    order.paymentMethod === 'Pick Up' && (
-                        <>
-                            <button
-                            className={`order-actions-button ready ${getStatusClass('isReady', order) === 'isReady' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isReady')}
-                            >
-                                Ready
-                            </button>
-                            <button
-                            className={`order-actions-button pickedup ${getStatusClass('isPickedUp', order) === 'isPickedUp' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isPickedUp')}
-                            >
-                                Picked Up
-                            </button>
-                        </>
-                    )
-                }
-                {
-                    order.paymentMethod !== 'Pick Up' && (
-                        <>
-                            <button
-                            className={`order-actions-button shipped ${getStatusClass('isShipped', order) === 'isShipped' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isShipped')}
-                            >
-                                Shipped
-                            </button>
-                            <button
-                            className={`order-actions-button outForDelivery ${getStatusClass('isOutForDelivery', order) === 'isOutForDelivery' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isOutForDelivery')}
-                            >
-                                Out For Delivery
-                            </button>
-                            <button
-                            className={`order-actions-button delivered ${getStatusClass('isDelivered', order) === 'isDelivered' ? 'active' : ''}`}
-                            onClick={() => handleStatusUpdate('isDelivered')}
-                            >
-                                Delivered
-                            </button>
-                        </>
-                    )
-                } */}
                 <button
-                className={`order-actions-button shipped ${getStatusClass('isShipped', order) === 'isShipped' ? 'active' : ''}`}
-                onClick={() => handleStatusUpdate('isShipped')}
+                className={`order-actions-button ready ${getStatusClass('isReady', order) === 'isReady' ? 'active' : ''}`}
+                onClick={() => handleStatusUpdate('isReady')}
                 >
-                    Shipped
+                    Ready
                 </button>
                 <button
-                className={`order-actions-button outForDelivery ${getStatusClass('isOutForDelivery', order) === 'isOutForDelivery' ? 'active' : ''}`}
-                onClick={() => handleStatusUpdate('isOutForDelivery')}
+                className={`order-actions-button pickedup ${getStatusClass('isPickedUp', order) === 'isPickedUp' ? 'active' : ''}`}
+                onClick={() => handleStatusUpdate('isPickedUp')}
                 >
-                    Out For Delivery
-                </button>
-                <button
-                className={`order-actions-button delivered ${getStatusClass('isDelivered', order) === 'isDelivered' ? 'active' : ''}`}
-                onClick={() => handleStatusUpdate('isDelivered')}
-                >
-                    Delivered
+                    Picked Up
                 </button>
             </div>
         </div>
 
         <div className='order-dates'>
             <p><strong>Placed on:</strong> {orderDate(order.createdAt)}</p>
-            <p><strong>Paid on:</strong> {orderDate(order.deliveredDate ? new Date(order.deliveredDate).toLocaleDateString() : 'N/A')}</p>
+            {/* <p><strong>Updated:</strong> {new Date(order.updatedAt).toLocaleDateString()}</p> */}
+            <p><strong>Paid on:</strong> {orderDate(order.pickedUpDate ? new Date(order.pickedUpDate).toLocaleDateString() : 'N/A')}</p>
         </div>
 
         <div className='order-info'>
@@ -160,8 +137,18 @@ function StaffOrdersDetailsPage() {
                 </p>
                 <p><strong>Email:</strong> {order.billingDetails.emailAddress}</p>
                 <p><strong>Phone:</strong> {order.billingDetails.contactNumber}</p>
-                <p><strong>PO:</strong> {order.poNumber}</p>
-                <p><strong>Payment terms:</strong> {order.paymentTerms}</p>
+                <p>
+                    <strong>Total Amount:</strong> ₱
+                    {order.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </p>
+                <p>
+                    <strong>Cash Received:</strong> ₱
+                    {order.cashReceived.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </p>
+                <p>
+                    <strong>Change:</strong> ₱
+                    {order.changeTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </p>
                 <p><strong>Delivery method:</strong> {order.paymentMethod}</p>
             </div>
             <div className='order-section'>
@@ -216,4 +203,4 @@ function StaffOrdersDetailsPage() {
   )
 }
 
-export default StaffOrdersDetailsPage
+export default AdminOrdersPickupDetailsPage

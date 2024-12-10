@@ -16,6 +16,7 @@ import StaffDirectOrdersPage from '../pages/StaffPage/StaffDirectOrdersPage'
 import StaffDirectOrdersDetailsPage from '../pages/StaffPage/StaffDirectOrdersDetailsPage'
 import StaffOrdersRefillPage from '../pages/StaffPage/StaffOrdersRefillPage'
 import StaffOrdersPickupPage from '../pages/StaffPage/StaffOrdersPickupPage'
+import StaffOrdersPickupDetailsPage from '../pages/StaffPage/StaffOrdersPickupDetailsPage'
 
 function StaffRoutes() {
   return (
@@ -36,6 +37,7 @@ function StaffRoutes() {
                 <Route path='/staff/orders-pickup' element={<StaffOrdersPickupPage />} />
                 <Route path='/staff/order-summary/:staffId/:orderId' element={<StaffOrderSummaryPage/>} />
                 <Route path='/staff/orders/details/:orderId' element={<StaffOrdersDetailsPage />} />
+                <Route path='/staff/orders-pickup/details/:orderId' element={<StaffOrdersPickupDetailsPage />} />
                 <Route path='/staff/settings/:staffId' element={<StaffSettingsPage />} />
                 <Route path='/staff/accounts' element={<StaffAccountsPage />} />
             </Routes>

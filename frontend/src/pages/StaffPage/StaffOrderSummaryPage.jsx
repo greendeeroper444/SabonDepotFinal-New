@@ -73,7 +73,10 @@ function StaffOrderSummaryPage() {
                             <span>Invoice</span>
                         </button>
                     </div>
-                    <p>Total Amount: ₱ {order.totalAmount}</p>
+                    <p>Total Amount: ₱{(order.totalAmount ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p>Cash Received: ₱{(order.cashReceived ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p>Change: ₱{(order.changeTotal ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+
                     <p>Order Date: {orderDate(order.createdAt)}</p>
 
 

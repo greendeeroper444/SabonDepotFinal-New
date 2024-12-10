@@ -11,7 +11,7 @@ const WorkinProgressProductModel = require("../../models/WorkinProgressProductMo
 //create order via staff
 const addOrderWalkinStaff = async(req, res) => {
     try {
-        const {staffId} = req.body;
+        const {staffId, cashReceived, changeTotal} = req.body;
         const token = req.cookies.token;
     
         if(!token){
@@ -81,12 +81,16 @@ const addOrderWalkinStaff = async(req, res) => {
                     imageUrl: item.productId.imageUrl,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     createdProductBy: item.productId.createdBy,
                     createdProductAt: item.productId.createdAt,
                     updatedProductBy: item.productId.updatedBy,
                     updatedProductAt: item.productId.updatedAt,
                 })),
                 totalAmount,
+                cashReceived,
+                changeTotal,
             });
     
             await order.save();
