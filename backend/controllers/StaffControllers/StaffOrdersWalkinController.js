@@ -117,7 +117,7 @@ const addOrderWalkinStaff = async(req, res) => {
                 if(existingProductionReport){
                     await ProductionReportModel.updateOne(
                         {_id: existingProductionReport._id},
-                        {$inc: { productionQuantity: item.quantity}}
+                        {$inc: {productionQuantity: item.quantity}}
                     );
                 } else {
                     await ProductionReportModel.create({
