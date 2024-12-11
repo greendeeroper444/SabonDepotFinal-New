@@ -5,7 +5,6 @@ import CustomerTopFooterComponent from '../../components/CustomerComponents/Cust
 import CustomerFooterComponent from '../../components/CustomerComponents/CustomerFooterComponent';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import CustomerCashOnDeliveryPaymentMethod from '../../components/CustomerComponents/CustomerCheckout/CustomerCashOnDeliveryPaymentMethod';
-import CustomerGcashPaymentMethod from '../../components/CustomerComponents/CustomerCheckout/CustomerGcashPaymentMethod';
 import UseCheckOutHook from '../../hooks/CustomerHooks/UseCheckOutHook';
 import { useContext, useState } from 'react';
 import { CustomerContext } from '../../../contexts/CustomerContexts/CustomerAuthContext';
@@ -212,25 +211,40 @@ function CustomerCheckOutPage() {
                     </label>
                     {
                         customer && ['Wholesaler'].includes(customer.clientType) && (
-                            <label>
-                                <input
-                                type="radio"
-                                name='payment'
-                                value="Cash On Delivery"
-                                checked={paymentMethod === 'Cash On Delivery'}
-                                onChange={handlePaymentChange}
-                                />
-                                <span>Cash On Delivery</span>
+                            <>
+                                <label>
+                                    <input
+                                    type="radio"
+                                    name='payment'
+                                    value="Cash On Delivery"
+                                    checked={paymentMethod === 'Cash On Delivery'}
+                                    onChange={handlePaymentChange}
+                                    />
+                                    <span>Cash On Delivery</span>
+                                
+                                </label>
                                 <p>
-                                    Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy.
+                                    {
+                                        total < 50000 && paymentMethod === 'Cash On Delivery' && (
+                                            <span className="error-message">
+                                                Total amount must be at least ₱50,000+ for Cash On Delivery.
+                                            </span>
+                                        )
+                                    }
                                 </p>
-                            </label>
+                            </>
                         )
                     }
                 </div>
                 <div className='place-order-button'>
-                    <button className={`place-order ${!paymentMethod ? 'disabled' : ''}`}
+                    {/* <button className={`place-order ${!paymentMethod ? 'disabled' : ''}`}
                     disabled={!paymentMethod} 
+                    >
+                        Place order
+                    </button> */}
+                    <button
+                    className={`place-order ${(!paymentMethod || (paymentMethod === 'Cash On Delivery' && total < 50000)) ? 'disabled' : ''}`}
+                    disabled={!paymentMethod || (paymentMethod === 'Cash On Delivery' && total < 50000)}
                     >
                         Place order
                     </button>

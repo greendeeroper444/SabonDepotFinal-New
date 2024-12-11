@@ -7,10 +7,10 @@ export default function CalculateFinalPriceUtils(customer, product) {
     let finalPrice = product.price;
 
     //check if customer is new and the discount is valid
-    if (customer.isNewCustomer && new Date(customer.newCustomerExpiresAt) > new Date()) {
+    if(customer && customer.isNewCustomer && new Date(customer.newCustomerExpiresAt) > new Date()) {
         //apply a 30% discount for new customers
         finalPrice = product.price * 0.70; // 30% discount
-    } else {
+    } else{
         //if there's an existing product discount
         finalPrice = shouldShowDiscount ? product.discountedPrice : product.price;
     }

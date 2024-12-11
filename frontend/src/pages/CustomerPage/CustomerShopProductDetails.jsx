@@ -15,7 +15,7 @@ function CustomerShopProductDetails() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const {productId} = useParams();
-    const {customer} = useContext(CustomerContext);
+    const {customer = {}} = useContext(CustomerContext);
     const {product, loading, error} = UseFetchProductDetailsHook(productId);
     const {cartItems, setCartItems, handleAddToCartClick} = UseCartHook(customer);
     const navigate = useNavigate();
@@ -194,7 +194,7 @@ function CustomerShopProductDetails() {
                                 {/* <h4>{product.productSize}</h4> */}
                                 <div className='price-container'>
                                 {
-                                    shouldShowDiscount && !customer.isNewCustomer && (
+                                    shouldShowDiscount && !customer?.isNewCustomer && (
                                         <h4 className='final-price line-through'>
                                             ₱ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </h4>
@@ -202,7 +202,7 @@ function CustomerShopProductDetails() {
                                 }
                                 
                                 {
-                                    customer.isNewCustomer && new Date(customer.newCustomerExpiresAt) > new Date() && (
+                                    customer?.isNewCustomer && new Date(customer?.newCustomerExpiresAt) > new Date() && (
                                         <h4 className='final-price line-through'>
                                             ₱ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </h4>

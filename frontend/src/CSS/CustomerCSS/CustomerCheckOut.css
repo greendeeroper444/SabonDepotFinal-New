@@ -76,7 +76,7 @@
     justify-content: space-between;
     margin-bottom: 10px;
 }
-
+/* 
 .customer-checkout-content .order-summary .place-order-button{
     text-align: center;
     margin-top: 20px;
@@ -98,7 +98,7 @@
     background-color: #ccc;
     cursor: not-allowed;
     color: #fff;
-}
+} */
 
 .customer-checkout-content .order-summary .payment-method label{
     display: block;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../../CSS/StaffCSS/StaffOrdersWalkin.css';
 import editIcon from '../../assets/staff/stafficons/staff-orders-edit-icon.png';
 import searchIcon from '../../assets/staff/stafficons/staff-orders-search-icon.png';
@@ -11,6 +11,7 @@ import StaffModalOrdersWalkinEditComponent from '../../components/StaffComponent
 import { orderDate } from '../../utils/OrderUtils';
 import DatePicker from "react-multi-date-picker";
 import { isSameDay } from 'date-fns';
+import { StaffContext } from '../../../contexts/StaffContexts/StaffAuthContext';
 
 function StaffOrdersWalkinPage() {
     const [orderWalkins, setOrderWalkins] = useState([]);
@@ -18,30 +19,13 @@ function StaffOrdersWalkinPage() {
     const [selectedDates, setSelectedDates] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [ordersPerPage, setOrdersPerPage] = useState(10);
-    const navigate = useNavigate();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const handleEditClick = (e, orderId) => {
-        e.stopPropagation();
-        handleEditOrderWalkinClick(orderId);
-    };
-
-    const handleCheckboxClick = (e) => {
-        e.stopPropagation();
-    };
-
-    const handleEditOrderWalkinClick = async(orderId) => {
-        try {
-            const response = await axios.get(`/staffOrderWalkin/getUpdateOrderWalkinStaff/${orderId}`);
-            setSelectedOrder(response.data);
-            setIsEditModalOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
+    const navigate = useNavigate()
+    const {staff} = useContext(StaffContext);
+    
+   
     const handleCloseEditModal = () => {
         setIsEditModalOpen(false);
         setSelectedOrder(null);
@@ -63,10 +47,6 @@ function StaffOrdersWalkinPage() {
     useEffect(() => {
         fetchOrderWalkins();
     }, []);
-
-    const handleNavigateWalkin = () => {
-        navigate('/staff/payment');
-    };
 
     const handleDateChange = (dates) => {
         setSelectedDates(dates);
@@ -103,6 +83,23 @@ function StaffOrdersWalkinPage() {
         setOrdersPerPage(Number(e.target.value));
         setCurrentPage(1);
     };
+
+    //define aggregateOrders function first
+    const aggregateOrders = (orders) => {
+        return orders.map(order => {
+            const aggregatedItems = order.items.map(item => item.productName).join(', ');
+            const totalQuantity = order.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            const totalPrice = order.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+            return {
+                ...order,
+                aggregatedItems,
+                totalQuantity,
+                totalPrice,
+            };
+        });
+    };
+
+    const aggregatedOrders = aggregateOrders(currentOrders);
 
   return (
     <div className='staff-orders-walkin-container'>
@@ -154,7 +151,7 @@ function StaffOrdersWalkinPage() {
                     <th>Orders Id</th>
                     <th>Item</th>
                     <th>Qty</th>
-                    <th>Size</th>
+                    {/* <th>Size</th> */}
                     <th>Price</th>
                     <th>Subtotal</th>
                     <th>Date</th>
@@ -162,22 +159,21 @@ function StaffOrdersWalkinPage() {
                 </tr>
             </thead>
             <tbody>
-                {
-                    currentOrders.length > 0 ? currentOrders.map(order => (
-                        order.items.map(item => (
-                            <tr key={item.productId} className='clickable-row'>
-                                {/* <td><input type='checkbox' onClick={handleCheckboxClick} /></td> */}
-                                <td>{order._id}</td>
-                                <td>{item.productName || "N/A"}</td>
-                                <td>{item.quantity || 0}</td>
-                                <td>{item.productSize}</td>
-                                <td>{`₱${(item.price ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</td>
-                                <td>{`₱${((item.price ?? 0) * (item.quantity ?? 0)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</td>
-                                <td>{orderDate(order.createdAt)}</td>
-                            </tr>
-                        ))
-                    )) : <tr><td colSpan="8">No results found</td></tr>
-                }
+            {
+                aggregatedOrders.length > 0 ? aggregatedOrders.map(order => (
+                    <tr key={order._id} className='clickable-row'
+                    onClick={() => navigate(`/staff/order-summary/${staff._id}/${order._id}`)}
+                    >
+                        <td>#{order._id}</td>
+                        <td>{order.aggregatedItems || "N/A"}</td>
+                        <td>{order.totalQuantity || 0}</td>
+                        {/* <td>-</td> */}
+                        <td>{`₱${order.totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</td>
+                        <td>{`₱${order.totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</td>
+                        <td>{orderDate(order.createdAt)}</td>
+                    </tr>
+                )) : <tr><td colSpan="8">No results found</td></tr>
+            }
             </tbody>
         </table>
         <div className='staff-orders-walkin-footer'>
