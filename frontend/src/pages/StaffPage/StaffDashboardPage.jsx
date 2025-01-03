@@ -26,11 +26,15 @@ function StaffDashboardPage() {
 
     const checkProductStock = async() => {
         try {
-            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin'); 
+            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin');
             const lowStockProducts = response.data;
-            const newNotifications = lowStockProducts.map(product => 
-                `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`
-            );
+    
+            const newNotifications = lowStockProducts.map(product => ({
+                message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
+                imageUrl: product.imageUrl,
+                productName: product.productName,
+            }));
+    
             setNotifications(newNotifications);
             setShowAlert(true);
         } catch (error) {
@@ -159,16 +163,31 @@ function StaffDashboardPage() {
 
   return (
     <div className='staff-dashboard-container'>
-        {
-            showAlert && (
+       {
+            showAlert && notifications.length > 0 && (
                 <div className='alert-message'>
                     <button className='close-alert' onClick={closeAlert}>
                         ×
                     </button>
                     <ul>
-                        {notifications.map((notification, index) => (
-                            <li key={index}>{notification}</li>
-                        ))}
+                        {
+                            notifications.map((notification, index) => (
+                                <li key={index} className='notification-item'>
+                                    <div className='notification-content'>
+                                        {
+                                            notification.imageUrl && (
+                                                <img
+                                                    src={`http://localhost:8000/${notification.imageUrl}`}
+                                                    alt={notification.productName || 'Product'}
+                                                    className='notification-image'
+                                                />
+                                            )
+                                        }
+                                        <span>{notification.message}</span>
+                                    </div>
+                                </li>
+                            ))
+                        }
                     </ul>
                 </div>
             )

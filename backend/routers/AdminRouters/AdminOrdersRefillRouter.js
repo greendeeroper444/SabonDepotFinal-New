@@ -3,7 +3,7 @@ const { addOrderRefillAdmin, getOrderRefillAdmin, getAllOrderRefillAdmin, update
 const router = express.Router();
 
 router.post('/addOrderRefillAdmin', addOrderRefillAdmin);
-router.get('/getOrderRefillAdmin/:adminId/:orderId?', getOrderRefillAdmin);
+router.get('/getOrderRefillAdmin/:orderId?', getOrderRefillAdmin);
 router.get('/getAllOrderRefillAdmin', getAllOrderRefillAdmin);
 router.put('/updateOrderRefillAdmin/:orderId', updateOrderRefillAdmin);
 router.get('/getUpdateOrderRefillAdmin/:orderId', getUpdateOrderRefillAdmin);

@@ -72,36 +72,36 @@
    margin-top: 50px;
 }
 
-.admin-finished-product-container .admin-finished-product-controls div:nth-child(1){
+.admin-finished-product-container .admin-finished-product-controls div:nth-child(2){
     font-size: 1.5em;
 }
 
-.admin-finished-product-container .admin-finished-product-controls div:nth-child(2){
+.admin-finished-product-container .admin-finished-product-controls div:nth-child(3){
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
 }
   
   
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(1){
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(2){
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #1366D9;
+    background-color: #077A37;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(1):hover, 
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(1):focus{
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(2):hover, 
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(2):focus{
     background-color: transparent;
-    border: 1px solid #1366D9;
-    color: #1366D9;
+    border: 1px solid #077A37;
+    color: #077A37;
 }
   
 
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(2){
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(3){
     padding: 10px 15px;
     margin-left: 10px;
     background-color: transparent;
@@ -112,10 +112,10 @@
     border: 1px solid #D0D3D9;
 }
 
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(2):hover, 
-.admin-finished-product-container .admin-finished-product-controls button:nth-child(2):focus{
-    background-color: #1366D9;
-    color: white;
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(3):hover, 
+.admin-finished-product-container .admin-finished-product-controls button:nth-child(3):focus{
+    background-color: #077A37;
+    color: #fff;
 }
   
 

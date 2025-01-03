@@ -8,10 +8,10 @@ const ProductionReportModel = require("../../models/ProductionReportModel");
 const { getInventoryReport, getSalesReport } = require("../AdminControllers/AdminReportController");
 const WorkinProgressProductModel = require("../../models/WorkinProgressProductModel");
 
-//create order via staff
+//create order via admin
 const addOrderWalkinAdmin = async(req, res) => {
     try {
-        const {adminId} = req.body;
+        const {cashReceived, changeTotal} = req.body;
         const token = req.cookies.token;
     
         if(!token){
@@ -26,18 +26,8 @@ const addOrderWalkinAdmin = async(req, res) => {
                     message: 'Unauthorized - Invalid token',
                 });
             }
-    
-            const adminExists = await AdminAuthModel.findById(adminId);
-            if(!adminExists){
-                return res.status(400).json({
-                    message: 'Admin does not exist',
-                });
-            }
-    
-            //fetch all items in the staff's cart
-            const cartItems = await StaffCartModel.find({
-                adminId,
-            }).populate('productId');
+
+            const cartItems = await StaffCartModel.find().populate('productId');
     
             if(cartItems.length === 0){
                 return res.status(400).json({
@@ -68,7 +58,6 @@ const addOrderWalkinAdmin = async(req, res) => {
     
             //create the order for the staff
             const order = new StaffOrderWalkinModel({
-                adminId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productCode: item.productId.productCode,
@@ -81,12 +70,16 @@ const addOrderWalkinAdmin = async(req, res) => {
                     imageUrl: item.productId.imageUrl,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
+                    desciption: item.productId.description,
+                    refillPrice: item.productId.refillPrice,
                     createdProductBy: item.productId.createdBy,
                     createdProductAt: item.productId.createdAt,
                     updatedProductBy: item.productId.updatedBy,
                     updatedProductAt: item.productId.updatedAt,
                 })),
                 totalAmount,
+                cashReceived,
+                changeTotal,
             });
     
             await order.save();
@@ -113,7 +106,7 @@ const addOrderWalkinAdmin = async(req, res) => {
                 if(existingProductionReport){
                     await ProductionReportModel.updateOne(
                         {_id: existingProductionReport._id},
-                        {$inc: { productionQuantity: item.quantity}}
+                        {$inc: {productionQuantity: item.quantity}}
                     );
                 } else {
                     await ProductionReportModel.create({
@@ -178,15 +171,15 @@ const addOrderWalkinAdmin = async(req, res) => {
                 }
 
 
-                // await getInventoryReport(
-                //     item.productId._id,
-                //     item.productId.productName,
-                //     item.productId.sizeUnit,
-                //     item.productId.productSize,
-                //     item.productId.category,
-                //     item.quantity,
-                //     true
-                // );
+                await getInventoryReport(
+                    item.productId._id,
+                    item.productId.productName,
+                    item.productId.sizeUnit,
+                    item.productId.productSize,
+                    item.productId.category,
+                    item.quantity,
+                    true
+                );
                 
                 await getSalesReport(
                     item.productId._id,
@@ -201,9 +194,7 @@ const addOrderWalkinAdmin = async(req, res) => {
 
             }));
     
-            await StaffCartModel.deleteMany({
-                adminId,
-            });
+            await StaffCartModel.deleteMany();
     
             res.status(201).json({
                 message: 'Order created successfully',
@@ -220,24 +211,17 @@ const addOrderWalkinAdmin = async(req, res) => {
 };
 
 
+
 const getOrderWalkinAdmin = async(req, res) => {
     try {
-        const {adminId, orderId} = req.params;
+        const {orderId} = req.params;
 
-        //check if the staff exists
-        const adminExists = await AdminAuthModel.findById(adminId);
-        if(!adminExists){
-            return res.status(400).json({
-                message: 'Admin does not exist',
-            });
-        }
-
-        //idf orderId is provided, fetch the specific order
+        //If orderId is provided, fetch the specific order
         if(orderId){
-            const order = await StaffOrderWalkinModel.findOne({_id: orderId, adminId});
+            const order = await StaffOrderWalkinModel.findById(orderId);
             if(!order){
-                return res.status(404).json({ 
-                    message: 'Order not found' 
+                return res.status(404).json({
+                    message: 'Order not found',
                 });
             }
 
@@ -247,8 +231,8 @@ const getOrderWalkinAdmin = async(req, res) => {
             });
         }
 
-        //otherwise, fetch all orders for the staff
-        const orders = await StaffOrderWalkinModel.find({adminId}).sort({createdAt: -1});
+        //otherwise, fetch all orders
+        const orders = await StaffOrderWalkinModel.find().sort({createdAt: -1});
 
         res.status(200).json({
             message: 'Orders fetched successfully',

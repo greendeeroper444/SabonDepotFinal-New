@@ -49,7 +49,8 @@ app.use('/adminCart', require('./routers/AdminRouters/AdminCartRouter'));
 app.use('/adminOrderWalkin', require('./routers/AdminRouters/AdminOrdersWalkinRouter'));
 app.use('/adminOrderRefill', require('./routers/AdminRouters/AdminOrdersRefillRouter'));
 app.use('/adminDatePicker', require('./routers/AdminRouters/AdminDateTimePickerRouter'));
-
+app.use('/adminProductCategory', require('./routers/AdminRouters/AdminProductCategoryRouter'));
+app.use('/adminProductSize', require('./routers/AdminRouters/AdminProductSizeRouter'));
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

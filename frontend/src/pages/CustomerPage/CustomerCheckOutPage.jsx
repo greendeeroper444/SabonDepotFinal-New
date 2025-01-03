@@ -190,25 +190,32 @@ function CustomerCheckOutPage() {
                 </div>
 
                 <div className='payment-method'>
-                    <label>
-                        <input
-                        type="radio"
-                        name='payment'
-                        value="Pick Up"
-                        checked={paymentMethod === 'Pick Up'}
-                        onChange={handlePaymentChange}
-                        />
-                        <span>Pick Up</span>
-                        <p>
-                            {
-                            selectedDate && selectedTime 
-                                ? `You have selected ${new Date(selectedDate).toLocaleDateString(undefined, {
-                                    weekday: "long", year: "numeric", month: "long", day: "numeric"})} 
-                                from ${selectedTime}`
-                                : 'Select a pick-up date and time'
-                            }
-                        </p>
-                    </label>
+                    {
+                        customer && ['Individual'].includes(customer.clientType) && (
+                            <>
+                                <label>
+                                    <input
+                                    type="radio"
+                                    name='payment'
+                                    value="Pick Up"
+                                    checked={paymentMethod === 'Pick Up'}
+                                    onChange={handlePaymentChange}
+                                    onClick={handlePaymentChange}
+                                    />
+                                    <span>Pick Up</span>
+                                    <p>
+                                        {
+                                        selectedDate && selectedTime 
+                                            ? `You have selected ${new Date(selectedDate).toLocaleDateString(undefined, {
+                                                weekday: "long", year: "numeric", month: "long", day: "numeric"})} 
+                                            from ${selectedTime}`
+                                            : 'Select a pick-up date and time'
+                                        }
+                                    </p>
+                                </label>
+                            </>
+                        )
+                    }
                     {
                         customer && ['Wholesaler'].includes(customer.clientType) && (
                             <>
@@ -226,7 +233,7 @@ function CustomerCheckOutPage() {
                                 <p>
                                     {
                                         total < 50000 && paymentMethod === 'Cash On Delivery' && (
-                                            <span className="error-message">
+                                            <span className='error-message'>
                                                 Total amount must be at least ₱50,000+ for Cash On Delivery.
                                             </span>
                                         )
@@ -243,8 +250,16 @@ function CustomerCheckOutPage() {
                         Place order
                     </button> */}
                     <button
-                    className={`place-order ${(!paymentMethod || (paymentMethod === 'Cash On Delivery' && total < 50000)) ? 'disabled' : ''}`}
-                    disabled={!paymentMethod || (paymentMethod === 'Cash On Delivery' && total < 50000)}
+                    className={`place-order ${
+                        (!paymentMethod || 
+                        (paymentMethod === 'Cash On Delivery' && total < 50000) || 
+                        (paymentMethod === 'Pick Up' && (!selectedDate || !selectedTime))) ? 'disabled' : ''
+                    }`}
+                    disabled={
+                        !paymentMethod || 
+                        (paymentMethod === 'Cash On Delivery' && total < 50000) || 
+                        (paymentMethod === 'Pick Up' && (!selectedDate || !selectedTime))
+                    }
                     >
                         Place order
                     </button>

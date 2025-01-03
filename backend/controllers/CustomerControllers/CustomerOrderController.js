@@ -660,7 +660,7 @@ const createOrderCustomer = async(req, res) => {
 
         //fetch selected cart items for the customer
         const cartItems = await CartModel.find({
-            _id: { $in: selectedItems },
+            _id: {$in: selectedItems},
             customerId,
         }).populate('productId');
 
@@ -830,6 +830,17 @@ const createOrderCustomer = async(req, res) => {
                 });
             }
 
+            await getInventoryReport(
+                item.productId._id,
+                item.productId.productName,
+                item.productId.sizeUnit,
+                item.productId.productSize,
+                item.productId.category,
+                item.quantity,
+                true
+            );
+
+
             await getSalesReport(
                 item.productId._id,
                 item.productId.productName,
@@ -843,7 +854,7 @@ const createOrderCustomer = async(req, res) => {
 
         //remove selected items from the cart
         await CartModel.deleteMany({
-            _id: { $in: selectedItems },
+            _id: {$in: selectedItems},
             customerId,
         });
 

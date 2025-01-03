@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../../CSS/StaffCSS/StaffOrdersWalkin.css';
 import editIcon from '../../assets/staff/stafficons/staff-orders-edit-icon.png';
 import searchIcon from '../../assets/staff/stafficons/staff-orders-search-icon.png';
@@ -11,6 +11,7 @@ import StaffModalOrdersWalkinEditComponent from '../../components/StaffComponent
 import { orderDate } from '../../utils/OrderUtils';
 import DatePicker from "react-multi-date-picker";
 import { isSameDay } from 'date-fns';
+import { AdminContext } from '../../../contexts/AdminContexts/AdminAuthContext';
 
 function AdminOrdersWalkinPage() {
     const [orderWalkins, setOrderWalkins] = useState([]);
@@ -22,15 +23,9 @@ function AdminOrdersWalkinPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const {admin} = useContext(AdminContext);
 
-    const handleEditClick = (e, orderId) => {
-        e.stopPropagation();
-        handleEditOrderWalkinClick(orderId);
-    };
-
-    const handleCheckboxClick = (e) => {
-        e.stopPropagation();
-    };
+    console.log('Admin data',admin)
 
     const handleEditOrderWalkinClick = async(orderId) => {
         try {
@@ -163,7 +158,9 @@ function AdminOrdersWalkinPage() {
                 {
                     currentOrders.length > 0 ? currentOrders.map(order => (
                         order.items.map(item => (
-                            <tr key={item.productId} className='clickable-row'>
+                            <tr key={item.productId} className='clickable-row'
+                            onClick={() => navigate(`/admin/order-summary/${order._id}`)}
+                            >
                                 {/* <td><input type='checkbox' onClick={handleCheckboxClick} /></td> */}
                                 <td>{order._id}</td>
                                 <td>{item.productName || "N/A"}</td>

@@ -28,6 +28,17 @@ function AdminFinishedProductPage() {
         lowStockCount: 0,
         notInStock: 0
     });
+    const [selectedCategory, setSelectedCategory] = useState('');
+    
+        const categories = [...new Set(products.map((product) => product.category))];
+    
+        const handleCategoryChange = (event) => {
+            setSelectedCategory(event.target.value);
+        };
+    
+        const filteredProducts = selectedCategory
+        ? products.filter((product) => product.category === selectedCategory)
+        : products;
 
     useEffect(() => {
         const fetchSummaryData = async() => {
@@ -230,6 +241,16 @@ function AdminFinishedProductPage() {
         <div className='admin-finished-product-controls'>
             <div>Products</div>
             <div>
+                <select onChange={handleCategoryChange} value={selectedCategory}>
+                    <option value=''>All Categories</option>
+                    {
+                        categories.map((category, index) => (
+                            <option key={index} value={category}>
+                                {category}
+                            </option>
+                        ))
+                    }
+                </select>
                 <button onClick={handleAddProductClick}>Add Product</button>
                 <button onClick={handleGenerateReport}>Print</button>
             </div>
@@ -256,7 +277,7 @@ function AdminFinishedProductPage() {
                     </thead>
                     <tbody>
                         {
-                            products.map((product) => (
+                            filteredProducts.map((product) => (
                                 <tr 
                                 key={product._id} 
                                 className={`${product.isArchived ? 'archived-product' : ''} 

@@ -11,7 +11,7 @@ const WorkinProgressProductModel = require("../../models/WorkinProgressProductMo
 //create order via staff
 const addOrderWalkinStaff = async(req, res) => {
     try {
-        const {staffId, cashReceived, changeTotal} = req.body;
+        const {cashReceived, changeTotal} = req.body;
         const token = req.cookies.token;
     
         if(!token){
@@ -27,17 +27,15 @@ const addOrderWalkinStaff = async(req, res) => {
                 });
             }
     
-            const staffExists = await StaffAuthModel.findById(staffId);
-            if(!staffExists){
-                return res.status(400).json({
-                    message: 'Staff does not exist',
-                });
-            }
+            // const staffExists = await StaffAuthModel.findById(staffId);
+            // if(!staffExists){
+            //     return res.status(400).json({
+            //         message: 'Staff does not exist',
+            //     });
+            // }
     
             //fetch all items in the staff's cart
-            const cartItems = await StaffCartModel.find({
-                staffId,
-            }).populate('productId');
+            const cartItems = await StaffCartModel.find().populate('productId');
     
             if(cartItems.length === 0){
                 return res.status(400).json({
@@ -68,7 +66,6 @@ const addOrderWalkinStaff = async(req, res) => {
     
             //create the order for the staff
             const order = new StaffOrderWalkinModel({
-                staffId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productCode: item.productId.productCode,
@@ -182,15 +179,15 @@ const addOrderWalkinStaff = async(req, res) => {
                 }
 
 
-                // await getInventoryReport(
-                //     item.productId._id,
-                //     item.productId.productName,
-                //     item.productId.sizeUnit,
-                //     item.productId.productSize,
-                //     item.productId.category,
-                //     item.quantity,
-                //     true
-                // );
+                await getInventoryReport(
+                    item.productId._id,
+                    item.productId.productName,
+                    item.productId.sizeUnit,
+                    item.productId.productSize,
+                    item.productId.category,
+                    item.quantity,
+                    true
+                );
                 
                 await getSalesReport(
                     item.productId._id,
@@ -205,9 +202,7 @@ const addOrderWalkinStaff = async(req, res) => {
 
             }));
     
-            await StaffCartModel.deleteMany({
-                staffId,
-            });
+            await StaffCartModel.deleteMany();
     
             res.status(201).json({
                 message: 'Order created successfully',
@@ -226,22 +221,14 @@ const addOrderWalkinStaff = async(req, res) => {
 
 const getOrderWalkinStaff = async(req, res) => {
     try {
-        const {staffId, orderId} = req.params;
+        const {orderId} = req.params;
 
-        //check if the staff exists
-        const staffExists = await StaffAuthModel.findById(staffId);
-        if(!staffExists){
-            return res.status(400).json({
-                message: 'Staff does not exist',
-            });
-        }
-
-        //idf orderId is provided, fetch the specific order
+        //If orderId is provided, fetch the specific order
         if(orderId){
-            const order = await StaffOrderWalkinModel.findOne({_id: orderId, staffId});
+            const order = await StaffOrderWalkinModel.findById(orderId);
             if(!order){
-                return res.status(404).json({ 
-                    message: 'Order not found' 
+                return res.status(404).json({
+                    message: 'Order not found',
                 });
             }
 
@@ -251,8 +238,8 @@ const getOrderWalkinStaff = async(req, res) => {
             });
         }
 
-        //otherwise, fetch all orders for the staff
-        const orders = await StaffOrderWalkinModel.find({staffId}).sort({createdAt: -1});
+        //otherwise, fetch all orders
+        const orders = await StaffOrderWalkinModel.find().sort({createdAt: -1});
 
         res.status(200).json({
             message: 'Orders fetched successfully',

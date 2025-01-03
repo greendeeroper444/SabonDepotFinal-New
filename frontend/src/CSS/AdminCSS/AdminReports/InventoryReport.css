@@ -97,6 +97,22 @@
     margin-bottom: 20px;
 }
 
+.admin-inventory-report-container .admin-inventory-report-footer div{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.admin-inventory-report-container .admin-inventory-report-footer .input-line{
+    border: none;
+    border-bottom: 1px solid #000;
+    width: 200px;
+    margin-top: 5px;
+    padding: 5px;
+    outline: none;
+}
+
+
 .admin-inventory-report-container .production-staff{
     text-align: start;
     margin-top: 20px;

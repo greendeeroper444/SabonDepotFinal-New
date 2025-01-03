@@ -35,7 +35,7 @@ function StaffRoutes() {
                 {/* <Route path='/staff/payment' element={<StaffPaymentPage />} /> */}
                 <Route path='/staff/orders' element={<StaffOrdersPage />} />
                 <Route path='/staff/orders-pickup' element={<StaffOrdersPickupPage />} />
-                <Route path='/staff/order-summary/:staffId/:orderId' element={<StaffOrderSummaryPage/>} />
+                <Route path='/staff/order-summary/:orderId' element={<StaffOrderSummaryPage/>} />
                 <Route path='/staff/orders/details/:orderId' element={<StaffOrdersDetailsPage />} />
                 <Route path='/staff/orders-pickup/details/:orderId' element={<StaffOrdersPickupDetailsPage />} />
                 <Route path='/staff/settings/:staffId' element={<StaffSettingsPage />} />

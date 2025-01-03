@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 
 
 const StaffCartSchema = new mongoose.Schema({
-    staffId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Staff'
-    },
     adminId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin'
+    },
+    staffId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Staff'
     },
     productId: {
         type: mongoose.Schema.Types.ObjectId,

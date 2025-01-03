@@ -22,8 +22,8 @@ function CustomerShopContentComponent() {
         return <div>Error: {error.message}</div>;
     }
 
-     //check if the customer is new and eligible for the discount
-     const isNewCustomer = customer?.isNewCustomer && new Date() < new Date(customer?.newCustomerExpiresAt);
+    //check if the customer is new and eligible for the discount
+    const isNewCustomer = customer?.isNewCustomer && new Date() < new Date(customer?.newCustomerExpiresAt);
 
   return (
     <div className='customer-shop-content-container'>

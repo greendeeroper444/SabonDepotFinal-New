@@ -10,7 +10,7 @@ const StaffOrderRefillModel = require("../../models/StaffModels/StaffOrderRefill
 //create order via staff
 const addOrderRefillStaff = async(req, res) => {
     try {
-        const {staffId, cashReceived, changeTotal} = req.body;
+        const {cashReceived, changeTotal} = req.body;
         const token = req.cookies.token;
     
         if(!token){
@@ -26,17 +26,15 @@ const addOrderRefillStaff = async(req, res) => {
                 });
             }
     
-            const staffExists = await StaffAuthModel.findById(staffId);
-            if(!staffExists){
-                return res.status(400).json({
-                    message: 'Staff does not exist',
-                });
-            }
+            // const staffExists = await StaffAuthModel.findById(staffId);
+            // if(!staffExists){
+            //     return res.status(400).json({
+            //         message: 'Staff does not exist',
+            //     });
+            // }
     
             //fetch all items in the staff's cart
-            const cartItems = await StaffCartModel.find({
-                staffId,
-            }).populate('productId');
+            const cartItems = await StaffCartModel.find().populate('productId');
     
             if(cartItems.length === 0){
                 return res.status(400).json({
@@ -50,7 +48,7 @@ const addOrderRefillStaff = async(req, res) => {
             // }, 0);
             //calculate raw total amount
             const rawTotalAmount = cartItems.reduce((acc, item) => {
-                return acc + item.productId.refillPrice * item.quantity;
+                return acc + item.productId.price * item.quantity;
             }, 0);
 
             //apply discount logic
@@ -67,7 +65,6 @@ const addOrderRefillStaff = async(req, res) => {
     
             //create the order for the staff
             const order = new StaffOrderRefillModel({
-                staffId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productCode: item.productId.productCode,
@@ -96,9 +93,13 @@ const addOrderRefillStaff = async(req, res) => {
             
             //update product quantities based on the order
             await Promise.all(cartItems.map(async (item) => {
-                await ProductModel.findByIdAndUpdate(item.productId._id, {
-                    $inc: {quantity: -item.quantity} //decrease product quantity
-                });
+                // await ProductModel.findByIdAndUpdate(item.productId._id, {
+                //     $inc: {quantity: -item.quantity} //decrease product quantity
+                // });
+                // await WorkinProgressProductModel.findByIdAndUpdate(item.productId._id, {
+                //     $inc: {quantity: -item.quantity} //decrease product quantity
+                // });
+
 
                 const today = new Date();
                 today.setUTCHours(0, 0, 0, 0); //set time to midnight for the day field
@@ -112,7 +113,7 @@ const addOrderRefillStaff = async(req, res) => {
                 if(existingProductionReport){
                     await ProductionReportModel.updateOne(
                         {_id: existingProductionReport._id},
-                        {$inc: { productionQuantity: item.quantity}}
+                        {$inc: {productionQuantity: item.quantity}}
                     );
                 } else {
                     await ProductionReportModel.create({
@@ -177,15 +178,15 @@ const addOrderRefillStaff = async(req, res) => {
                 }
 
 
-                // await getInventoryReport(
-                //     item.productId._id,
-                //     item.productId.productName,
-                //     item.productId.sizeUnit,
-                //     item.productId.productSize,
-                //     item.productId.category,
-                //     item.quantity,
-                //     true
-                // );
+                await getInventoryReport(
+                    item.productId._id,
+                    item.productId.productName,
+                    item.productId.sizeUnit,
+                    item.productId.productSize,
+                    item.productId.category,
+                    item.quantity,
+                    true
+                );
                 
                 await getSalesReport(
                     item.productId._id,
@@ -197,13 +198,10 @@ const addOrderRefillStaff = async(req, res) => {
                     item.quantity,
                     true
                 );
-    
 
             }));
     
-            await StaffCartModel.deleteMany({
-                staffId,
-            });
+            await StaffCartModel.deleteMany();
     
             res.status(201).json({
                 message: 'Order created successfully',
@@ -222,22 +220,14 @@ const addOrderRefillStaff = async(req, res) => {
 
 const getOrderRefillStaff = async(req, res) => {
     try {
-        const {staffId, orderId} = req.params;
+        const {orderId} = req.params;
 
-        //check if the staff exists
-        const staffExists = await StaffAuthModel.findById(staffId);
-        if(!staffExists){
-            return res.status(400).json({
-                message: 'Staff does not exist',
-            });
-        }
-
-        //idf orderId is provided, fetch the specific order
+        //If orderId is provided, fetch the specific order
         if(orderId){
-            const order = await StaffOrderRefillModel.findOne({_id: orderId, staffId});
+            const order = await StaffOrderRefillModel.findById(orderId);
             if(!order){
-                return res.status(404).json({ 
-                    message: 'Order not found' 
+                return res.status(404).json({
+                    message: 'Order not found',
                 });
             }
 
@@ -247,8 +237,8 @@ const getOrderRefillStaff = async(req, res) => {
             });
         }
 
-        //otherwise, fetch all orders for the staff
-        const orders = await StaffOrderRefillModel.find({staffId}).sort({createdAt: -1});
+        //otherwise, fetch all orders
+        const orders = await StaffOrderRefillModel.find().sort({createdAt: -1});
 
         res.status(200).json({
             message: 'Orders fetched successfully',
@@ -261,7 +251,6 @@ const getOrderRefillStaff = async(req, res) => {
         });
     }
 };
-
 const getAllOrderRefillStaff = async(req, res) => {
     try {
         const staffProducts = await StaffOrderRefillModel.find();

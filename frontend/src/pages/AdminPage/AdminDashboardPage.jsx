@@ -22,11 +22,15 @@ function AdminDashboardPage() {
 
     const checkProductStock = async() => {
         try {
-            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin'); 
+            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin');
             const lowStockProducts = response.data;
-            const newNotifications = lowStockProducts.map(product => 
-                `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`
-            );
+    
+            const newNotifications = lowStockProducts.map(product => ({
+                message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
+                imageUrl: product.imageUrl,
+                productName: product.productName,
+            }));
+    
             setNotifications(newNotifications);
             setShowAlert(true);
         } catch (error) {
@@ -121,13 +125,60 @@ function AdminDashboardPage() {
     //     fetchProductionReport();
     // }, []);
 
+    // useEffect(() => {
+    //     const fetchProductionReport = async() => {
+    //         try {
+    //             const productionResponse = await axios.get('/adminOrderOverview/getProductionReport');
+    //             const productionData = productionResponse.data;
+    
+    //             //create a map to hold unique dates and their cumulative quantities
+    //             const productionMap = productionData.reduce((acc, item) => {
+    //                 const date = monthDay(item.date);
+    //                 if(acc[date]){
+    //                     acc[date] += item.quantity;
+    //                 } else{
+    //                     acc[date] = item.quantity;
+    //                 }
+    //                 return acc;
+    //             }, {});
+    
+    //             //separate labels and data from the productionMap
+    //             const chartLabels = Object.keys(productionMap);
+    //             const chartQuantities = Object.values(productionMap);
+    
+    //             setProductionReports({
+    //                 labels: chartLabels,
+    //                 datasets: [
+    //                     {
+    //                         label: 'Production Quantity',
+    //                         data: chartQuantities,
+    //                         backgroundColor: (context) => {
+    //                             const chart = context.chart;
+    //                             const { ctx, chartArea } = chart;
+    //                             if(!chartArea) return null; //prevent chart undefined
+    
+    //                             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    //                             gradient.addColorStop(0, '#00ff6a');
+    //                             gradient.addColorStop(1, '#006633');
+    //                             return gradient;
+    //                         },
+    //                     },
+    //                 ],
+    //             });
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+    
+    //     fetchProductionReport();
+    // }, []);
+
     useEffect(() => {
         const fetchProductionReport = async() => {
             try {
                 const productionResponse = await axios.get('/adminOrderOverview/getProductionReport');
                 const productionData = productionResponse.data;
     
-                //create a map to hold unique dates and their cumulative quantities
                 const productionMap = productionData.reduce((acc, item) => {
                     const date = monthDay(item.date);
                     if(acc[date]){
@@ -138,7 +189,6 @@ function AdminDashboardPage() {
                     return acc;
                 }, {});
     
-                //separate labels and data from the productionMap
                 const chartLabels = Object.keys(productionMap);
                 const chartQuantities = Object.values(productionMap);
     
@@ -148,27 +198,17 @@ function AdminDashboardPage() {
                         {
                             label: 'Production Quantity',
                             data: chartQuantities,
-                            backgroundColor: (context) => {
-                                const chart = context.chart;
-                                const { ctx, chartArea } = chart;
-                                if(!chartArea) return null; //prevent chart undefined
-    
-                                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                                gradient.addColorStop(0, '#00ff6a');
-                                gradient.addColorStop(1, '#006633');
-                                return gradient;
-                            },
+                            backgroundColor: '#00ff6a',
                         },
                     ],
                 });
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching production report:', error.response?.data || error.message);
             }
         };
     
         fetchProductionReport();
     }, []);
-
     
     const chartOptions = {
         responsive: true,
@@ -214,19 +254,35 @@ function AdminDashboardPage() {
   return (
     <div className='admin-dashboard-container'>
         {
-            showAlert && (
+            showAlert && notifications.length > 0 && (
                 <div className='alert-message'>
                     <button className='close-alert' onClick={closeAlert}>
                         ×
                     </button>
                     <ul>
-                        {notifications.map((notification, index) => (
-                            <li key={index}>{notification}</li>
-                        ))}
+                        {
+                            notifications.map((notification, index) => (
+                                <li key={index} className='notification-item'>
+                                    <div className='notification-content'>
+                                        {
+                                            notification.imageUrl && (
+                                                <img
+                                                    src={`http://localhost:8000/${notification.imageUrl}`}
+                                                    alt={notification.productName || 'Product'}
+                                                    className='notification-image'
+                                                />
+                                            )
+                                        }
+                                        <span>{notification.message}</span>
+                                    </div>
+                                </li>
+                            ))
+                        }
                     </ul>
                 </div>
             )
         }
+
 
         <div className='admin-dashboard-first'>
             <div className='admin-top-sales'>

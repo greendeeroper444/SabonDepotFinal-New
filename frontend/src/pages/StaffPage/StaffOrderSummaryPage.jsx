@@ -9,7 +9,7 @@ import StaffInvoiceModal from '../../components/StaffComponents/StaffInvoiceModa
 import invoiceIcon from '../../assets/placeorder/placeorder-invoice-icon.png';
 
 function StaffOrderSummaryPage() {
-    const {staffId, orderId} = useParams();
+    const {orderId} = useParams();
     const [orders, setOrders] = useState([]);
     const [isInvoiceModalOpen, setInvoiceModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -19,15 +19,15 @@ function StaffOrderSummaryPage() {
             let response;
     
             if(orderId){
-                response = await axios.get(`/staffOrderWalkin/getOrderWalkinStaff/${staffId}/${orderId}`)
+                response = await axios.get(`/staffOrderWalkin/getOrderWalkinStaff/${orderId}`)
                 .catch(async () => {
-                    return await axios.get(`/staffOrderRefill/getOrderRefillStaff/${staffId}/${orderId}`);
+                    return await axios.get(`/staffOrderRefill/getOrderRefillStaff/${orderId}`);
                 });
             } else {
-                response = await axios.get(`/staffOrderWalkin/getOrderWalkinStaff/${staffId}`)
+                response = await axios.get(`/staffOrderWalkin/getOrderWalkinStaff`)
                 .catch(async () => {
                     
-                    return await axios.get(`/staffOrderRefill/getOrderRefillStaff/${staffId}`);
+                    return await axios.get(`/staffOrderRefill/getOrderRefillStaff`);
                 });
             }
     
@@ -39,10 +39,10 @@ function StaffOrderSummaryPage() {
     };
     
     useEffect(() => {
-        if(staffId){
+        if(orderId){
             fetchOrders();
         }
-    }, [staffId, orderId]);
+    }, [orderId]);
 
     const handleInvoiceClick = (order) => {
         setSelectedOrder(order);

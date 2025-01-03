@@ -21,7 +21,17 @@ function StaffProductsPage() {
     const [isArchived, setIsArchived] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
+    const categories = [...new Set(products.map((product) => product.category))];
+
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(event.target.value);
+    };
+
+    const filteredProducts = selectedCategory
+    ? products.filter((product) => product.category === selectedCategory)
+    : products;
 
     //generate PDF report
     const handleGenerateReport = () => {
@@ -155,6 +165,12 @@ function StaffProductsPage() {
         setIsModalOpen(false);
     };
 
+    const currentDate = new Date().toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'Asia/Singapore',
+    });
 
     
     if(loading){
@@ -195,9 +211,19 @@ function StaffProductsPage() {
         <div className='staff-products-header'>
             <h1>CLEAN-UP SOLUTIONS ENTERPRISES, INC.</h1>
             <h2>PRODUCT LISTS</h2>
-            <p>As of May 30, 2022</p>
+            <p>As of {currentDate}</p>
         </div>
         <div className='staff-products-controls'>
+            <select onChange={handleCategoryChange} value={selectedCategory}>
+                <option value=''>All Categories</option>
+                {
+                    categories.map((category, index) => (
+                        <option key={index} value={category}>
+                            {category}
+                        </option>
+                    ))
+                }
+            </select>
             <button onClick={handleAddProductClick}>Add Product</button>
             <button onClick={handleGenerateReport}>Reports</button>
         </div>
@@ -223,7 +249,7 @@ function StaffProductsPage() {
                     </thead>
                     <tbody>
                         {
-                            products.map((product) => (
+                            filteredProducts.map((product) => (
                                 <tr 
                                 key={product._id} 
                                 className={`${product.isArchived ? 'archived-product' : ''} 

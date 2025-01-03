@@ -49,7 +49,6 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
             const {finalSubtotal} = calculateSubtotalModalStaff(cartItems);
 
             const orderData = {
-                staffId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productName: item.productId.productName,
@@ -69,7 +68,7 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                 toast.success(`Order created successfully! Order ID: ${orderId}`);
                 setCartItems([]);
                 onClose();
-                navigate(`/staff/order-summary/${staffId}/${orderId}`);
+                navigate(`/staff/order-summary/${orderId}`);
             } else {
                 toast.error(response.data.message || 'Failed to create the order.');
             }
@@ -203,10 +202,10 @@ function StaffModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                     <div className='products-subtotal'>
                         <span>Cash:</span>
                         <input
-                            type='number'
-                            min='1'
-                            value={cashReceived}
-                            onChange={(e) => handleCashReceivedChange(e.target.value)}
+                        type='number'
+                        min='1'
+                        value={cashReceived}
+                        onChange={(e) => handleCashReceivedChange(e.target.value)}
                         />
                     </div>
                     <div className='products-subtotal'>

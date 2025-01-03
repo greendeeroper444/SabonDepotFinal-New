@@ -3,7 +3,7 @@ const { addOrderWalkinAdmin, getOrderWalkinAdmin, getAllOrderWalkinAdmin, update
 const router = express.Router();
 
 router.post('/addOrderWalkinAdmin', addOrderWalkinAdmin);
-router.get('/getOrderWalkinAdmin/:adminId/:orderId?', getOrderWalkinAdmin);
+router.get('/getOrderWalkinAdmin/:orderId?', getOrderWalkinAdmin);
 router.get('/getAllOrderWalkinAdmin', getAllOrderWalkinAdmin);
 router.put('/updateOrderWalkinAdmin/:orderId', updateOrderWalkinAdmin);
 router.get('/getUpdateOrderWalkinAdmin/:orderId', getUpdateOrderWalkinAdmin);

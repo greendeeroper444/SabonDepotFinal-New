@@ -163,7 +163,8 @@ function AdminOrdersRefillPage() {
                 {
                     currentOrders.length > 0 ? currentOrders.map(order => (
                         order.items.map(item => (
-                            <tr key={item.productId} className='clickable-row'>
+                            <tr key={item.productId} className='clickable-row'
+                                onClick={() => navigate(`/admin/order-summary/${order._id}`)}>
                                 {/* <td><input type='checkbox' onClick={handleCheckboxClick} /></td> */}
                                 <td>{order._id}</td>
                                 <td>{item.productName || "N/A"}</td>

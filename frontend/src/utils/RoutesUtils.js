@@ -14,7 +14,7 @@ export const adminRoutes = [
     '/admin/reports/sales-report',
     '/admin/accounts/:id',
     '/admin/quick-sales',
-    '/admin/order-summary/:adminId/:orderId',
+    '/admin/order-summary/:orderId',
     '/admin/settings'
 ];
   
@@ -43,7 +43,7 @@ export const staffRoutes = [
     '/staff/orders/details/:orderId',
     '/staff/orders-pickup/details/:orderId',
     '/staff/settings/:staffId',
-    '/staff/order-summary/:staffId/:orderId',
+    '/staff/order-summary/:orderId',
     '/staff/accounts',
 ];
   

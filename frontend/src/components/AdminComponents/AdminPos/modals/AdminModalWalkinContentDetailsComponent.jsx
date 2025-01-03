@@ -11,8 +11,9 @@ import { calculateFinalPriceModalAdmin, calculateSubtotalModalAdmin } from '../.
 
 function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, setCartItems, adminId}) {
     const navigate = useNavigate();
+    const [cashReceived, setCashReceived] = useState('');
+    const [changeTotal, setChangeTotal] = useState(0);
 
-    const [sizeSelection, setSizeSelection] = useState({});
 
     //handle quantity change
     const handleQuantityChange = async(cartItemId, newQuantity) => {
@@ -49,7 +50,6 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
             const {finalSubtotal} = calculateSubtotalModalAdmin(cartItems);
 
             const orderData = {
-                adminId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productName: item.productId.productName,
@@ -58,6 +58,8 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                 })),
                 // totalAmount: calculateSubtotalModalAdmin(cartItems),
                 totalAmount: parseFloat(finalSubtotal.replace(/,/g, '')),
+                cashReceived,
+                changeTotal,
             };
 
             const response = await axios.post('/adminOrderWalkin/addOrderWalkinAdmin', orderData);
@@ -67,7 +69,7 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                 toast.success(`Order created successfully! Order ID: ${orderId}`);
                 setCartItems([]);
                 onClose();
-                navigate(`/admin/order-summary/${adminId}/${orderId}`);
+                navigate(`/admin/order-summary/${orderId}`);
             } else {
                 toast.error(response.data.message || 'Failed to create the order.');
             }
@@ -76,6 +78,7 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
             toast.error('Failed to create the order. Please try again.');
         }
     };
+
 
     //delete function
     const handleCartItemDelete = async(cartItemId) => {
@@ -110,11 +113,18 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
         }
     }, [isOpen, adminId]);
 
-    const handleSizeChange = (cartItemId, selectedSize) => {
-        setSizeSelection((prev) => ({
-            ...prev,
-            [cartItemId]: selectedSize,
-        }));
+    // 
+    const handleCashReceivedChange = (value) => {
+        const receivedValue = parseFloat(value) || '';
+    
+        setCashReceived(receivedValue);
+    
+        //get the final subtotal as a number by removing '₱' and commas
+        const {finalSubtotal} = calculateSubtotalModalAdmin(cartItems);
+        const numericSubtotal = parseFloat(finalSubtotal.replace(/₱|,/g, '')) || 0;
+    
+        const change = receivedValue - numericSubtotal;
+        setChangeTotal(change);
     };
 
     if(!isOpen) return null;
@@ -206,6 +216,19 @@ function AdminModalWalkinContentDetailsComponent({isOpen, onClose, cartItems, se
                     <div className='products-subtotal'>
                         <span>Total:</span>
                         <span> ₱ {calculateSubtotalModalAdmin(cartItems).finalSubtotal}</span>
+                    </div>
+                    <div className='products-subtotal'>
+                        <span>Cash:</span>
+                        <input
+                            type='number'
+                            min='1'
+                            value={cashReceived}
+                            onChange={(e) => handleCashReceivedChange(e.target.value)}
+                        />
+                    </div>
+                    <div className='products-subtotal'>
+                        <span>Change:</span>
+                        <span> ₱ {changeTotal.toFixed(2)}</span>
                     </div>
                 </div>
 

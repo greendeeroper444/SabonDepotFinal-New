@@ -162,7 +162,7 @@ function StaffOrdersWalkinPage() {
             {
                 aggregatedOrders.length > 0 ? aggregatedOrders.map(order => (
                     <tr key={order._id} className='clickable-row'
-                    onClick={() => navigate(`/staff/order-summary/${staff._id}/${order._id}`)}
+                    onClick={() => navigate(`/staff/order-summary/${order._id}`)}
                     >
                         <td>#{order._id}</td>
                         <td>{order.aggregatedItems || "N/A"}</td>

@@ -26,6 +26,18 @@ const AdminInventoryReportSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    preparedBy: {
+        type: String,
+        default: ''
+    },
+    checkedBy: {
+        type: String,
+        default: ''
+    },
+    receivedBy: {
+        type: String,
+        default: ''
+    },
     reportDate: {
         type: Date,
         required: true,

@@ -7,6 +7,7 @@ import AdminDirectOrdersRefillContentComponent from '../../components/AdminCompo
 import AdminModalWalkinContentDetailsComponent from '../../components/AdminComponents/AdminPos/modals/AdminModalWalkinContentDetailsComponent';
 import UseCartHook from '../../hooks/AdminHooks/UseCartHook';
 import { AdminContext } from '../../../contexts/AdminContexts/AdminAuthContext';
+import AdminModalRefillingContentDetailsComponent from '../../components/AdminComponents/AdminPos/modals/AdminModalRefillingContentDetailsComponent';
 
 function AdminQuickSalesPage() {
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -156,7 +157,7 @@ function AdminQuickSalesPage() {
         </div>
     </div>
         {
-            orderType === 'Walkin' && (
+            orderType === 'Walkin' ? (
                 <AdminModalWalkinContentDetailsComponent
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
@@ -164,6 +165,14 @@ function AdminQuickSalesPage() {
                     setCartItems={setCartItems}
                     adminId={admin?._id}
                 />
+            ) : (
+                <AdminModalRefillingContentDetailsComponent
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                cartItems={cartItems}
+                setCartItems={setCartItems}
+                adminId={admin?._id}
+            />
             )
         }
 

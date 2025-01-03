@@ -23,7 +23,7 @@
     margin-bottom: 20px;
 }
   
-.staff-products-container .staff-products-controls button:nth-child(1){
+.staff-products-container .staff-products-controls button:nth-child(2){
     padding: 10px 15px;
     margin-left: 10px;
     background-color: #077A37;
@@ -33,15 +33,15 @@
     cursor: pointer;
 }
 
-.staff-products-container .staff-products-controls button:nth-child(1):hover, 
-.staff-products-container .staff-products-controls button:nth-child(1):focus{
+.staff-products-container .staff-products-controls button:nth-child(2):hover, 
+.staff-products-container .staff-products-controls button:nth-child(2):focus{
     background-color: transparent;
     border: 1px solid #077A37;
     color: #077A37;
 }
   
 
-.staff-products-container .staff-products-controls button:nth-child(2){
+.staff-products-container .staff-products-controls button:nth-child(3){
     padding: 10px 15px;
     margin-left: 10px;
     background-color: transparent;
@@ -52,8 +52,8 @@
     border: 1px solid #D0D3D9;
 }
 
-.staff-products-container .staff-products-controls button:nth-child(2):hover, 
-.staff-products-container .staff-products-controls button:nth-child(2):focus{
+.staff-products-container .staff-products-controls button:nth-child(3):hover, 
+.staff-products-container .staff-products-controls button:nth-child(3):focus{
     background-color: #077A37;
     color: white;
 }

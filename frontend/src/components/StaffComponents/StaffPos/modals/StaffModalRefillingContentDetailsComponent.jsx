@@ -49,14 +49,13 @@ function StaffModalRefillingContentDetailsComponent({isOpen, onClose, cartItems,
             const {finalSubtotal} = calculateSubtotalModalStaff(cartItems);
 
             const orderData = {
-                staffId,
                 items: cartItems.map((item) => ({
                     productId: item.productId._id,
                     productName: item.productId.productName,
                     quantity: item.quantity,
                     finalPrice: calculateFinalRefillPriceModalStaff(item),
                 })),
-                // totalAmount: calculateSubtotalModalStaff(cartItems),
+                // totalAmount: calculateSubtotalModalAdmin(cartItems),
                 totalAmount: parseFloat(finalSubtotal.replace(/,/g, '')),
                 cashReceived,
                 changeTotal,
@@ -69,7 +68,7 @@ function StaffModalRefillingContentDetailsComponent({isOpen, onClose, cartItems,
                 toast.success(`Order created successfully! Order ID: ${orderId}`);
                 setCartItems([]);
                 onClose();
-                navigate(`/staff/order-summary/${staffId}/${orderId}`);
+                navigate(`/staff/order-summary/${orderId}`);
             } else {
                 toast.error(response.data.message || 'Failed to create the order.');
             }
@@ -78,6 +77,7 @@ function StaffModalRefillingContentDetailsComponent({isOpen, onClose, cartItems,
             toast.error('Failed to create the order. Please try again.');
         }
     };
+
 
     //delete function
     const handleCartItemDelete = async(cartItemId) => {

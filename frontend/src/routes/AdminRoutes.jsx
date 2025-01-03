@@ -45,7 +45,7 @@ function AdminRoutes({adminToggleSidebar, adminCloseSidebar, adminSidebarVisible
                 <Route path='/admin/reports/sales-report' element={<SalesReport />} />
                 <Route path='/admin/accounts/:id' element={<AdminAccountDetails />} />
                 <Route path='/admin/quick-sales' element={<AdminQuickSalesPage />} />
-                <Route path='/admin/order-summary/:adminId/:orderId' element={<AdminOrderSummaryPage/>} />
+                <Route path='/admin/order-summary/:orderId' element={<AdminOrderSummaryPage/>} />
                 <Route path='/admin/settings' element={<AdminSettingsPage />} />
             </Routes>
         </div>

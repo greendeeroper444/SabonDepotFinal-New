@@ -23,6 +23,54 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
         refillPrice: ''
     });
     const [inputValue, setInputValue] = useState(0); 
+    const [categories, setCategories] = useState([]);
+    const [sizeUnits, setSizeUnits] = useState([]);
+
+
+    useEffect(() => {
+        const fetchSizeUnits = async() => {
+            try {
+                const response = await axios.get('/adminProductSize/getSizeUnitsWithSizes');
+                setSizeUnits(response.data);
+                console.log('Size Units fetched',response.data);
+            } catch (error) {
+                console.error(error);
+                setSizeUnits([]); //jandle errors gracefully
+            }
+        };
+    
+        fetchSizeUnits();
+    }, []);
+
+    useEffect(() => {
+        const fetchCategories = async() => {
+            try {
+                const response = await axios.get('/adminProductCategory/getProductCategory');
+                console.log('Fetched Categories:', response.data);
+                if(Array.isArray(response.data)){
+                    setCategories(response.data); //ensure categories are set correctly
+                } else{
+                    setCategories([]); //if not an array, set it as an empty array
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                setCategories([]); //set empty array if there's an error
+            }
+        };
+    
+        fetchCategories();
+    }, []);
+    
+
+    //handle category selection change
+    const handleCategoryChange = (event) => {
+        const selectedValue = event.target.value;
+        setDataInput((prevState) => ({
+            ...prevState,
+            category: selectedValue,
+        }));
+    };
+    
 
     const handleEditProductStaff = async(e) => {
         e.preventDefault();
@@ -97,9 +145,6 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
         }
     };
 
-    const categories = ['Dishwashing Liquid', 'Car Soap', 'Fabric Conditioner', 'Pet Shampoo', 'Ethanol'];
-    const unitSize = ['Milliliters', 'Liters', 'Gallons'];
-
     const handleSizeUnitChange = (e) => {
         setDataInput({
             ...dataInput,
@@ -109,59 +154,25 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
     };
 
     const renderSizeInputOptions = () => {
-        switch (dataInput.sizeUnit) {
-            case 'Milliliters':
-                return (
-                    <select
-                    value={dataInput.productSize}
-                    onChange={(e) => setDataInput({ ...dataInput, productSize: e.target.value })}
-                    >
-                        <option value="">Select size in mL</option>
-                        <option value="1ml">1ml</option>
-                        <option value="5ml">5 mL</option>
-                        <option value="10ml">10ml</option>
-                        <option value="50ml">50ml</option>
-                        <option value="100ml">100ml</option>
-                        <option value="200ml">200ml</option>
-                        <option value="250ml">250ml</option>
-                        <option value="500ml">500ml</option>
-                        <option value="750ml">750ml</option>
-                        <option value="1000ml">1000ml (1 L)</option>
-                    </select>
-                );
-            case 'Liters':
-                return (
-                    <select
-                    value={dataInput.productSize}
-                    onChange={(e) => setDataInput({ ...dataInput, productSize: e.target.value })}
-                    >
-                        <option value="">Select size in L</option>
-                        <option value="1L">1L</option>
-                        <option value="1.5L">1.5L</option>
-                        <option value="2L">2L</option>
-                        <option value="3L">3L</option>
-                        <option value="5L">5L</option>
-                        <option value="10L">10L</option>
-                        <option value="20L">20L</option>
-                    </select>
-                );
-            case 'Gallons':
-                return (
-                    <select
-                    value={dataInput.productSize}
-                    onChange={(e) => setDataInput({...dataInput, productSize: e.target.value})}
-                    >
-                        <option value="">Select size in gal</option>
-                        <option value="1gal">1gal</option>
-                        <option value="2gal">2gal</option>
-                        <option value="5gal">5gal</option>
-                        <option value="10gal">10gal</option>
-                        <option value="50gal">50gal</option>
-                    </select>
-                );
-            default:
-                return null;
-        }
+        const selectedUnit = sizeUnits.find(unit => unit.sizeUnit === dataInput.sizeUnit);
+    
+        if(!selectedUnit) return null;
+    
+        return (
+            <select
+            value={dataInput.productSize}
+            onChange={(e) => setDataInput({ ...dataInput, productSize: e.target.value })}
+            >
+                <option value="">Select size</option>
+                {
+                    selectedUnit.sizes.map((size, index) => (
+                        <option key={index} value={size}>
+                            {size}
+                        </option>
+                    ))
+                }
+            </select>
+        );
     };
 
     if(!isOpen) return null;
@@ -218,15 +229,21 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
             <div className='label-text'>
                 <label>PRODUCT CATEGORY:</label>
                 <div>
-                    <select 
-                    value={dataInput.category} 
-                    onChange={(e) => setDataInput({...dataInput, category: e.target.value})}
+                    <select
+                    value={dataInput.category}
+                    onChange={handleCategoryChange}
                     >
-                        <option value="" disabled>Select category</option>
+                        <option value="">Select Category</option>
                         {
-                            categories.map((cat, index) => (
-                                <option key={index} value={cat}>{cat}</option>
-                            ))
+                            categories && categories.length > 0 ? (
+                                categories.map((category) => (
+                                    <option key={category._id} value={category.categoryName}>
+                                        {category.categoryName}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">No categories available</option>
+                            )
                         }
                     </select>
                 </div>
@@ -234,11 +251,16 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
             <div className='label-text'>
                 <label>SIZE UNIT:</label>
                 <div>
-                    <select value={dataInput.sizeUnit} onChange={handleSizeUnitChange}>
+                    <select
+                    value={dataInput.sizeUnit}
+                    onChange={handleSizeUnitChange}
+                    >
                         <option value="">Select size unit</option>
                         {
-                            unitSize.map((size, index) => (
-                                <option key={index} value={size}>{size}</option>
+                            sizeUnits.map((unit, index) => (
+                                <option key={index} value={unit.sizeUnit}>
+                                    {unit.sizeUnit}
+                                </option>
                             ))
                         }
                     </select>

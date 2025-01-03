@@ -19,15 +19,15 @@ function AdminOrderSummaryPage() {
             let response;
     
             if(orderId){
-                response = await axios.get(`/adminOrderWalkin/getOrderWalkinAdmin/${adminId}/${orderId}`)
+                response = await axios.get(`/adminOrderWalkin/getOrderWalkinAdmin/${orderId}`)
                 .catch(async () => {
-                    return await axios.get(`/adminOrderRefill/getOrderRefillAdmin/${adminId}/${orderId}`);
+                    return await axios.get(`/adminOrderRefill/getOrderRefillAdmin/${orderId}`);
                 });
             } else {
-                response = await axios.get(`/adminOrderWalkin/getOrderWalkinAdmin/${adminId}`)
+                response = await axios.get(`/adminOrderWalkin/getOrderWalkinAdmin`)
                 .catch(async () => {
                     
-                    return await axios.get(`/adminOrderRefill/getOrderRefillAdmin/${adminId}`);
+                    return await axios.get(`/adminOrderRefill/getOrderRefillAdmin`);
                 });
             }
     
@@ -39,10 +39,10 @@ function AdminOrderSummaryPage() {
     };
     
     useEffect(() => {
-        if(adminId){
+        if(orderId){
             fetchOrders();
         }
-    }, [adminId, orderId]);
+    }, [orderId]);
 
     const handleInvoiceClick = (order) => {
         setSelectedOrder(order);
@@ -73,8 +73,9 @@ function AdminOrderSummaryPage() {
                             <span>Invoice</span>
                         </button>
                     </div>
-                    <p>Total Amount: ₱ {order.totalAmount}</p>
-                    <p>Order Date: {orderDate(order.createdAt)}</p>
+                    <p>Total Amount: ₱{(order.totalAmount ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p>Cash Received: ₱{(order.cashReceived ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p>Change: ₱{(order.changeTotal ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
 
 
                     <div className='order-items'>

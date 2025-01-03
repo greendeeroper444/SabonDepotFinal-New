@@ -269,7 +269,8 @@ const addProductToCartStaff = async(req, res) => {
                 });
             }
 
-            const finalPrice = product.discountedPrice || product.price;
+            // const finalPrice = product.discountedPrice || product.refillPrice;
+            const finalPrice = product.refillPrice || product.price;
 
             let existingCartItem = await StaffCartModel.findOne({
                 staffId,

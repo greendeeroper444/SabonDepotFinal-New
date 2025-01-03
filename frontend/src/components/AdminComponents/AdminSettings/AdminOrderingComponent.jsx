@@ -129,8 +129,8 @@ function AdminOrderingComponent() {
                                 Submit
                             </button>
                             <button
-                                onClick={() => setIsDateModalOpen(false)}
-                                className='close-button'
+                            onClick={() => setIsDateModalOpen(false)}
+                            className='close-button'
                             >
                                 Cancel
                             </button>
@@ -173,9 +173,9 @@ function AdminOrderingComponent() {
                                     ))
                                 }
                             </label>
-                            <button onClick={handleAddTimeSlot} className='add-time-button'>
+                            {/* <button onClick={handleAddTimeSlot} className='add-time-button'>
                                 Add Time Slot
-                            </button>
+                            </button> */}
                             </div>
                             <div className='modal-footer'>
                             <button onClick={handleAddTime} className='submit-button'>
