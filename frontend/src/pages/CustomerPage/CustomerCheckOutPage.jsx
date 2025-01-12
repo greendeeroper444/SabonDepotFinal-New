@@ -169,7 +169,7 @@ function CustomerCheckOutPage() {
                                 (customer?.isNewCustomer && new Date(customer?.newCustomerExpiresAt) > new Date()
                                     ? item.productId.price * 0.7
                                     : item.discountedPrice || item.productId.discountedPrice
-                                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                ).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
                             }`}</p>
                         </div>
                     ))
@@ -268,7 +268,7 @@ function CustomerCheckOutPage() {
         </form>
 
 
-        {
+        {/* {
             showCashOnDeliveryModal && (
                 <CustomerCashOnDeliveryPaymentMethod
                 onClose={() => setShowCashOnDeliveryModal(false)}
@@ -278,7 +278,7 @@ function CustomerCheckOutPage() {
                 })}
                 />
             )
-        }
+        } */}
 
 
         {

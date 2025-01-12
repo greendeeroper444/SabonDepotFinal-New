@@ -78,6 +78,7 @@ export const customerRoutes = [
     '/profile/:customerId',
     '/orders/:customerId',
     '/shop',
+    '/shop/product',
     '/shop/product/details/:productId',
     '/cart/:customerId',
     '/checkout/:customerId',

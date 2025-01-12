@@ -68,6 +68,11 @@ const ProductSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    batch: {
+        type: String,
+        required: true,
+        default: 'Batch 1',
+    },
     description: {
         type: String,
     },

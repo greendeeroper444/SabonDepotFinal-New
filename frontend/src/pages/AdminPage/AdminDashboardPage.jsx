@@ -15,6 +15,7 @@ function AdminDashboardPage() {
     const [orderCounts, setOrderCounts] = useState({
         delivered: 0,
         pending: 0,
+        pickedUp: 0,
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [notifications, setNotifications] = useState([]);
@@ -29,6 +30,10 @@ function AdminDashboardPage() {
                 message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
                 imageUrl: product.imageUrl,
                 productName: product.productName,
+                productCode: product.productCode,
+                quantity: product.quantity,
+                stockLevel: product.stockLevel,
+
             }));
     
             setNotifications(newNotifications);
@@ -44,11 +49,17 @@ function AdminDashboardPage() {
     const closeAlert = () => {
         setShowAlert(false);
     };
+    
     useEffect(() => {
         const fetchOrderCounts = async() => {
             try {
-                const countsResponse = await axios.get('/staffOrderOverview/getDeliveredPendingCanceled');
-                setOrderCounts(countsResponse.data);
+                const response = await axios.get('/staffOrderOverview/getDeliveredPendingCanceled');
+                const {delivered, pending, pickedUp} = response.data;
+                setOrderCounts({
+                    delivered,
+                    pending,
+                    pickedUp
+                });
             } catch (error) {
                 console.error(error);
             }
@@ -89,90 +100,7 @@ function AdminDashboardPage() {
         fetchSalesOverview();
     }, []);
 
-    // useEffect(() => {
-    //     const fetchProductionReport = async() => {
-    //         try {
-    //             const productionResponse = await axios.get('/adminOrderOverview/getProductionReport');
-    //             const productionData = productionResponse.data;
-
-    //             const chartLabels = productionData.map(item => monthDay(item.date));
-    //             const chartQuantities = productionData.map(item => item.quantity);
-
-    //             setProductionReports({
-    //                 labels: chartLabels,
-    //                 datasets: [
-    //                     {
-    //                         label: 'Production Quantity',
-    //                         data: chartQuantities,
-    //                         backgroundColor: (context) => {
-    //                             const chart = context.chart;
-    //                             const { ctx, chartArea } = chart;
-    //                             if(!chartArea) return null;//prevent chart undefined
-
-    //                             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    //                             gradient.addColorStop(0, '#00ff6a');
-    //                             gradient.addColorStop(1, '#006633');
-    //                             return gradient;
-    //                         },
-    //                     },
-    //                 ],
-    //             });
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-
-    //     fetchProductionReport();
-    // }, []);
-
-    // useEffect(() => {
-    //     const fetchProductionReport = async() => {
-    //         try {
-    //             const productionResponse = await axios.get('/adminOrderOverview/getProductionReport');
-    //             const productionData = productionResponse.data;
     
-    //             //create a map to hold unique dates and their cumulative quantities
-    //             const productionMap = productionData.reduce((acc, item) => {
-    //                 const date = monthDay(item.date);
-    //                 if(acc[date]){
-    //                     acc[date] += item.quantity;
-    //                 } else{
-    //                     acc[date] = item.quantity;
-    //                 }
-    //                 return acc;
-    //             }, {});
-    
-    //             //separate labels and data from the productionMap
-    //             const chartLabels = Object.keys(productionMap);
-    //             const chartQuantities = Object.values(productionMap);
-    
-    //             setProductionReports({
-    //                 labels: chartLabels,
-    //                 datasets: [
-    //                     {
-    //                         label: 'Production Quantity',
-    //                         data: chartQuantities,
-    //                         backgroundColor: (context) => {
-    //                             const chart = context.chart;
-    //                             const { ctx, chartArea } = chart;
-    //                             if(!chartArea) return null; //prevent chart undefined
-    
-    //                             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    //                             gradient.addColorStop(0, '#00ff6a');
-    //                             gradient.addColorStop(1, '#006633');
-    //                             return gradient;
-    //                         },
-    //                     },
-    //                 ],
-    //             });
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-    
-    //     fetchProductionReport();
-    // }, []);
-
     useEffect(() => {
         const fetchProductionReport = async() => {
             try {
@@ -259,26 +187,49 @@ function AdminDashboardPage() {
                     <button className='close-alert' onClick={closeAlert}>
                         ×
                     </button>
-                    <ul>
-                        {
-                            notifications.map((notification, index) => (
-                                <li key={index} className='notification-item'>
-                                    <div className='notification-content'>
-                                        {
-                                            notification.imageUrl && (
-                                                <img
-                                                    src={`http://localhost:8000/${notification.imageUrl}`}
-                                                    alt={notification.productName || 'Product'}
-                                                    className='notification-image'
-                                                />
-                                            )
-                                        }
-                                        <span>{notification.message}</span>
-                                    </div>
-                                </li>
-                            ))
-                        }
-                    </ul>
+                    <table className='notification-table'>
+                        <thead>
+                            <tr>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Size</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                notifications.map((notification, index) => (
+                                    <tr key={index}
+                                    className={`${notification.quantity < notification.stockLevel ? 'low-stock-tr' : ''} 
+                                    ${notification.quantity === 0 ? 'out-of-stock-tr' : ''}`}
+                                    onClick={() =>
+                                        window.location.href =
+                                        'http://localhost:5173/admin/inventory/finished-product'
+                                    }
+                                    >
+                                        <td>{notification.productCode || 'N/A'}</td>
+                                        <td className='product-name'>
+                                            <img
+                                                src={`http://localhost:8000/${notification.imageUrl}`}
+                                                alt={notification.productName || 'Product'}
+                                                className='notification-image'
+                                            />
+                                            {notification.productName}
+                                        </td>
+                                        <td>{notification.category || 'Example 3'}</td>
+                                        <td>{notification.size || 'M - 600ml'}</td>
+                                        <td>{notification.price || '300'}</td>
+                                        <td>{notification.quantity || '10'}</td>
+                                        <td className={`${notification.quantity < notification.stockLevel ? 'low-stock' : ''} 
+                                        ${notification.quantity === 0 ? 'out-of-stock' : ''}`}>Low stock</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
                 </div>
             )
         }
@@ -300,15 +251,15 @@ function AdminDashboardPage() {
                                     <div>
                                         <>
                                             <img
-                                            src={`http://localhost:8000/${product.productId.imageUrl}`}
-                                            alt={product.productId.productName || 'Product'}
+                                            src={`http://localhost:8000/${product.imageUrl}`}
+                                            alt={product.productName || 'Product'}
                                             />
                                             <strong>{product.productName}</strong>
                                             <div>{product.totalProduct} products sold</div>
                                         </>
                                     </div>
                                     <>
-                                        <div className='admin-price'>Price: {product.productId.price}</div>
+                                        <div className='admin-price'>Price: {product.price}</div>
                                         <div className='admin-inventory'>Inventory: {product.totalProduct}</div>
                                         <div className='admin-sale'>Sale: {product.totalSales}</div>
                                     </>

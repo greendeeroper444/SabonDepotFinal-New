@@ -105,20 +105,16 @@ const getDeliveredPendingCanceled = async(req, res) => {
 
         //count pending orders where isDelivered, isApproved, isShipped, and isOutForDelivery are all false
         const pendingCount = await OrderModel.countDocuments({ 
-            isReceived: false, 
-            isDelivered: false, 
-            isConfirmed: false, 
-            isShipped: false, 
-            isOutForDelivery: false 
+            isPending: true
         });
 
         //count canceled orders where isCanceled is true
-        const canceledCount = await OrderModel.countDocuments({isCanceled: true});
+        const pickedupCount = await OrderModel.countDocuments({isPickedUp: true});
 
         res.json({
             delivered: deliveredCount,
             pending: pendingCount,
-            canceled: canceledCount
+            pickedUp: pickedupCount,
         });
     } catch (error) {
         res.status(500).json({

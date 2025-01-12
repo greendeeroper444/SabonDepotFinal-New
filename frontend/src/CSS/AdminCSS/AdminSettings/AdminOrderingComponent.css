@@ -54,8 +54,8 @@
 }
 
 .admin-ordering-component .entries-table th{
-    background-color: #f4f4f4;
-    font-weight: bold;
+    background-color: #077A37;
+    color: #fff;
 }
 
 .admin-ordering-component .entries-table tr:nth-child(even){
@@ -103,6 +103,7 @@
     margin: 5px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .admin-ordering-component .add-time-button{
@@ -151,4 +152,24 @@
 
 .admin-ordering-component .close-button:hover{
     background-color: #c82333;
+}
+
+.admin-ordering-component .edit-btn,
+.admin-ordering-component .delete-btn{
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.admin-ordering-component .edit-btn{
+    background-color: #2196F3;
+    color: #fff;
+    margin-right: 5px;
+}
+  
+.admin-ordering-component .delete-btn{
+    background-color: #f44336;
+    color: #fff;
 }

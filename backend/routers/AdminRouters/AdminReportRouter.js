@@ -6,7 +6,7 @@ const router = express.Router();
 //routes for inventory report
 // router.post('/createDailyInventoryReportAdmin', createDailyInventoryReportAdmin);
 router.get('/getInventoryReportsAdmin', getInventoryReportsAdmin);
-router.post('/updateInventoryReportNames', updateInventoryReportNames);
+router.put('/updateInventoryReportNames', updateInventoryReportNames);
 
 // //routes for sales report
 // router.post('/createDailySalesReportAdmin', createDailySalesReportAdmin);

@@ -10,6 +10,19 @@ import { CustomerContext } from '../../../contexts/CustomerContexts/CustomerAuth
 import UseFetchProductDetailsHook from '../../hooks/CustomerHooks/UseFetchProductDetailsHook';
 import UseCartHook from '../../hooks/CustomerHooks/UseCartHook';
 import calculateFinalPriceUtils from '../../utils/CalculateFinalPriceUtils';
+import CalculateFinalPriceUtils from '../../utils/StaffCalculateFinalPriceUtils';
+
+
+const getDaysLeftMessage = (discountedDate) => {
+    const currentDate = new Date();
+    const targetDate = new Date(discountedDate);
+    const timeDifference = targetDate - currentDate;
+    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+    return daysLeft > 0 
+        ? `${daysLeft} day${daysLeft > 1 ? 's' : ''} left` 
+        : 'Discount expired';
+};
 
 function CustomerShopProductDetails() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +35,20 @@ function CustomerShopProductDetails() {
     const [selectedSizeUnit, setSelectedSizeUnit] = useState("");
     const [selectedProductId, setSelectedProductId] = useState("");
     const {customerId} = useParams();
+
+    if(loading){
+        return <div>Loading...</div>;
+    }
+
+    if(error){
+        return <div>Error: {error.message}</div>;
+    }
+
+    const {shouldShowDiscount, finalPrice} = calculateFinalPriceUtils(customer, product);
+
+    const daysLeftMessage = product?.discountedDate && shouldShowDiscount
+        ? getDaysLeftMessage(product.discountedDate)
+        : null;
 
     const handleCheckout = (product) => {
         navigate(`/direct-checkout/${customer?._id}`, {
@@ -98,17 +125,6 @@ function CustomerShopProductDetails() {
 
     const handleCloseModal = () => setIsModalOpen(false);
 
-    if(loading){
-        return <div>Loading...</div>;
-    }
-
-    if(error){
-        return <div>Error: {error.message}</div>;
-    }
-
-
-    const {shouldShowDiscount, finalPrice} = calculateFinalPriceUtils(customer, product);
-
     const handleAddToCart = async() => {
         const success = await handleAddToCartClick(customer?._id, productId, quantity);
         if(success){
@@ -179,6 +195,11 @@ function CustomerShopProductDetails() {
                                         </div>
                                     )
                                 }
+                                {
+                                    shouldShowDiscount && (
+                                        <span className='days-left'>{daysLeftMessage}</span>
+                                    )
+                                }
                             </div>
                         </div>
                     </div>
@@ -208,9 +229,10 @@ function CustomerShopProductDetails() {
                                         </h4>
                                     )
                                 }
-                                    <h4 className='final-price'>
-                                        ₱ {finalPrice}
-                                    </h4>
+                                
+                                <h4 className='final-price'>
+                                    ₱ {finalPrice}
+                                </h4>
                                 </div>
                                 {/* <div className='stars-reviews-content'>
                                     {renderStars(rating)}
@@ -289,11 +311,11 @@ function CustomerShopProductDetails() {
 
                         <div className='customer-shop-product-details-product-sku'>
                             <span>SKU</span>
-                            <span>: SS001</span>
+                            <span>: {product.productCode}</span>
                         </div>
                         <div className='customer-shop-product-details-product-category'>
                             <span>Category</span>
-                            <span>: Dishwashing Liquid</span>
+                            <span>: {product.category}</span>
                         </div>
 
                     </div>

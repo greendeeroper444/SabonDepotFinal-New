@@ -18,7 +18,8 @@ function StaffDashboardPage() {
     const [orderCounts, setOrderCounts] = useState({ 
         delivered: 0, 
         pending: 0, 
-        canceled: 0 
+        canceled: 0,
+        pickedUp: 0,
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [notifications, setNotifications] = useState([]);
@@ -33,6 +34,10 @@ function StaffDashboardPage() {
                 message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
                 imageUrl: product.imageUrl,
                 productName: product.productName,
+                productCode: product.productCode,
+                quantity: product.quantity,
+                stockLevel: product.stockLevel,
+
             }));
     
             setNotifications(newNotifications);
@@ -169,26 +174,49 @@ function StaffDashboardPage() {
                     <button className='close-alert' onClick={closeAlert}>
                         ×
                     </button>
-                    <ul>
-                        {
-                            notifications.map((notification, index) => (
-                                <li key={index} className='notification-item'>
-                                    <div className='notification-content'>
-                                        {
-                                            notification.imageUrl && (
-                                                <img
-                                                    src={`http://localhost:8000/${notification.imageUrl}`}
-                                                    alt={notification.productName || 'Product'}
-                                                    className='notification-image'
-                                                />
-                                            )
-                                        }
-                                        <span>{notification.message}</span>
-                                    </div>
-                                </li>
-                            ))
-                        }
-                    </ul>
+                    <table className='notification-table'>
+                        <thead>
+                            <tr>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Size</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                notifications.map((notification, index) => (
+                                    <tr key={index}
+                                    className={`${notification.quantity < notification.stockLevel ? 'low-stock-tr' : ''} 
+                                    ${notification.quantity === 0 ? 'out-of-stock-tr' : ''}`}
+                                    onClick={() =>
+                                        window.location.href =
+                                        'http://localhost:5173/staff/products'
+                                    }
+                                    >
+                                        <td>{notification.productCode || 'N/A'}</td>
+                                        <td className='product-name'>
+                                            <img
+                                                src={`http://localhost:8000/${notification.imageUrl}`}
+                                                alt={notification.productName || 'Product'}
+                                                className='notification-image'
+                                            />
+                                            {notification.productName}
+                                        </td>
+                                        <td>{notification.category || 'Example 3'}</td>
+                                        <td>{notification.size || 'M - 600ml'}</td>
+                                        <td>{notification.price || '300'}</td>
+                                        <td>{notification.quantity || '10'}</td>
+                                        <td className={`${notification.quantity < notification.stockLevel ? 'low-stock' : ''} 
+                                        ${notification.quantity === 0 ? 'out-of-stock' : ''}`}>Low stock</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
                 </div>
             )
         }
@@ -231,19 +259,19 @@ function StaffDashboardPage() {
                         <div className='card-icon'><img src={clockIcon} alt="Clock Icon" /></div>
                     </div>
                 </div>
-                {/* <div className='card canceled-card'>
+                <div className='card canceled-card'>
                     <div className='card-header'>
-                        <h3>Canceled Orders</h3>
+                        <h3>Picked Up Orders</h3>
                         <div className='card-menu'>⋮</div>
                     </div>
                     <div className='card-content'>
                         <div className='card-info'>
                             <p>Total</p>
-                            <h2>{orderCounts.canceled}</h2> 
+                            <h2>{orderCounts.pickedUp}</h2> 
                         </div>
                         <div className='card-icon'><img src={xCircleIcon} alt="X Circle Icon" /></div>
                     </div>
-                </div> */}
+                </div>
             </div>
         </div>
         <div className='dashboard-header'>

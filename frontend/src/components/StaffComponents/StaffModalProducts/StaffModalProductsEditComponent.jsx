@@ -321,7 +321,7 @@ function StaffModalProductsEditComponent({isOpen, onClose, selectedProduct, fetc
                 </div>
             </div>
             <div className='label-text'>
-                <label>UPDATE DISCOUNTED DATE:</label>
+                <label>UPDATE DISCOUNT END:</label>
                 <div>
                     <input
                     type="date"

@@ -7,15 +7,15 @@ const path = require('path');
 dotenv.config({ path: './.env' });
 const app = express();
 
-require('./cronJobs/dailyInventoryReport');
-require('./cronJobs/resetDiscounted');
-
 app.use(middleware);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.MONGO_URL)
 .then(() => console.log('Database connected'))
 .catch((error) => console.log('Database not connected', error));
+
+require('./jobs/resetDiscountsJob');
+require('./jobs/deleteProductsJob');
 
 //customer routes
 app.use('/customerAuth', require('./routers/CustomerRouters/CustomerAuthRouter'));
@@ -51,6 +51,9 @@ app.use('/adminOrderRefill', require('./routers/AdminRouters/AdminOrdersRefillRo
 app.use('/adminDatePicker', require('./routers/AdminRouters/AdminDateTimePickerRouter'));
 app.use('/adminProductCategory', require('./routers/AdminRouters/AdminProductCategoryRouter'));
 app.use('/adminProductSize', require('./routers/AdminRouters/AdminProductSizeRouter'));
+app.use('/adminUsers', require('./routers/AdminRouters/AdminUsersRouter'));
+app.use('/adminNotifications', require('./routers/AdminRouters/AdminNotificationRouter'));
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

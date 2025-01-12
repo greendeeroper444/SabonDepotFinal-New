@@ -6,10 +6,15 @@ import { orderDate } from '../../../utils/OrderUtils';
 function AdminOrderingComponent() {
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
     const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+    const [isUpdateDateModalOpen, setIsUpdateDateModalOpen] = useState(false);
+    const [isUpdateTimeModalOpen, setIsUpdateTimeModalOpen] = useState(false);
     const [date, setDate] = useState('');
-    const [timeSlots, setTimeSlots] = useState([{start: '', end: ''}]);
+    const [timeSlots, setTimeSlots] = useState([{ start: '', end: '' }]);
     const [dates, setDates] = useState([]);
     const [times, setTimes] = useState([]);
+    const [selectedDateId, setSelectedDateId] = useState(null);
+    const [selectedTimeId, setSelectedTimeId] = useState(null);
+    const [updateTime, setUpdateTime] = useState('');
 
     const fetchDates = async() => {
         try {
@@ -34,8 +39,6 @@ function AdminOrderingComponent() {
         fetchTimes();
     }, []);
 
-    const handleAddTimeSlot = () =>
-        setTimeSlots([...timeSlots, {start: '', end: ''}]);
 
     const handleTimeChange = (index, field, value) => {
         const updatedSlots = [...timeSlots];
@@ -89,6 +92,40 @@ function AdminOrderingComponent() {
         }
     };
 
+
+    const handleUpdateDate = async () => {
+        try {
+            await axios.put(`/adminDatePicker/updateDate/${selectedDateId}`, { date });
+            fetchDates();
+            setDate('');
+            setIsUpdateDateModalOpen(false);
+        } catch (error) {
+            console.error('Error updating date:', error);
+        }
+    };
+
+    const handleUpdateTime = async () => {
+        try {
+            await axios.put(`/adminDatePicker/updateTime/${selectedTimeId}`, { time: updateTime });
+            fetchTimes();
+            setUpdateTime('');
+            setIsUpdateTimeModalOpen(false);
+        } catch (error) {
+            console.error('Error updating time:', error);
+        }
+    };
+
+    const openUpdateDateModal = (id, existingDate) => {
+        setSelectedDateId(id);
+        setDate(existingDate);
+        setIsUpdateDateModalOpen(true);
+    };
+
+    const openUpdateTimeModal = (id, existingTime) => {
+        setSelectedTimeId(id);
+        setUpdateTime(existingTime);
+        setIsUpdateTimeModalOpen(true);
+    };
   return (
     <div className='admin-ordering-component'>
         <div className='action-buttons'>
@@ -139,6 +176,7 @@ function AdminOrderingComponent() {
                 </div>
             )
         }
+
 
   
         {
@@ -193,6 +231,66 @@ function AdminOrderingComponent() {
             )
         }
 
+         {/* update date modal */}
+        {
+            isUpdateDateModalOpen && (
+                    <div className='modal-overlay'>
+                        <div className='modal-content'>
+                            <h2>Update Date</h2>
+                            <div className='modal-body'>
+                                <label>
+                                    Select Date:
+                                    <input
+                                        type="date"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        className='date-input'
+                                    />
+                                </label>
+                            </div>
+                            <div className='modal-footer'>
+                                <button onClick={handleUpdateDate} className='submit-button'>
+                                    Update
+                                </button>
+                                <button onClick={() => setIsUpdateDateModalOpen(false)} className='close-button'>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                isUpdateTimeModalOpen && (
+                    <div className='modal-overlay'>
+                        <div className='modal-content'>
+                            <h2>Update Time</h2>
+                            <div className='modal-body'>
+                                <label>
+                                    Update Time Slot:
+                                    <input
+                                        type="text"
+                                        value={updateTime}
+                                        onChange={(e) => setUpdateTime(e.target.value)}
+                                        className='time-input'
+                                        placeholder="E.g., 10:00 AM - 12:00 PM"
+                                    />
+                                </label>
+                            </div>
+                            <div className='modal-footer'>
+                                <button onClick={handleUpdateTime} className='submit-button'>
+                                    Update
+                                </button>
+                                <button onClick={() => setIsUpdateTimeModalOpen(false)} className='close-button'>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
 
         <div className='entries-list'>
             <h3>Unavailable Dates</h3>
@@ -211,9 +309,9 @@ function AdminOrderingComponent() {
                             <td>{index + 1}</td>
                             <td>{orderDate(entry.date)}</td>
                             <td>
-                                <button onClick={() => handleDeleteDate(entry._id)}>Delete</button>
-                                    {/* {' '}
-                                <button>Update</button> */}
+                                <button className='delete-btn' onClick={() => handleDeleteDate(entry._id)}>Delete</button>
+                                    {' '}
+                                <button className='edit-btn' onClick={() => openUpdateDateModal(entry._id, entry.date)}>Edit</button>
                             </td>
                         </tr>
                         ))
@@ -237,9 +335,9 @@ function AdminOrderingComponent() {
                             <td>{index + 1}</td>
                             <td>{entry.time}</td>
                             <td>
-                                <button onClick={() => handleDeleteTime(entry._id)}>Delete</button>
-                                    {/* {' '}
-                                <button>Update</button> */}
+                                <button className='delete-btn' onClick={() => handleDeleteTime(entry._id)}>Delete</button>
+                                    {' '}
+                                <button className='edit-btn' onClick={() => openUpdateTimeModal(entry._id, entry.time)}>Edit</button>
                             </td>
                         </tr>
                         ))

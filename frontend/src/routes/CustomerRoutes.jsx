@@ -19,6 +19,7 @@ import CustomerCheckOutPage from '../pages/CustomerPage/CustomerCheckOutPage'
 import CustomerPlaceOrderPage from '../pages/CustomerPage/CustomerPlaceOrderPage'
 import CustomerPayablePage from '../pages/CustomerPage/CustomerPayablePage'
 import CustomerDirectCheckOutPage from '../pages/CustomerPage/CustomerDirectCheckOutPage'
+import CustomerShopProductPage from '../pages/CustomerPage/CustomerShopProductPage'
 
 function CustomerRoutes({customerToggleSidebar, customerCloseSidebar, customerSidebarVisible}) {
   return (
@@ -39,6 +40,7 @@ function CustomerRoutes({customerToggleSidebar, customerCloseSidebar, customerSi
                 <Route path='/profile/:customerId' element={<CustomerProfilePage />} />
                 <Route path='/orders/:customerId' element={<CustomerPayablePage />} />
                 <Route path='/shop' element={<CustomerShopPage />} />
+                <Route path='/shop/product' element={<CustomerShopProductPage />} />
                 <Route path='/shop/product/details/:productId' element={<CustomerShopProductDetails />} />
                 <Route path='/cart/:customerId' element={<CustomerCartPage />} />
                 <Route path='/checkout/:customerId' element={<CustomerCheckOutPage />} />

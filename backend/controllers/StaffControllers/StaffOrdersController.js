@@ -216,6 +216,7 @@ const updateOrderStatusStaff = async(req, res) => {
             updateFields.overallPaid = order.totalAmount;
             updateFields.paymentStatus = 'Paid';
             updateFields.isFullPaidAmount = true;
+            updateFields.isPending = true;
     
             await NotificationModel.create({
                 customerId: order.customerId,
@@ -255,6 +256,7 @@ const updateOrderStatusStaff = async(req, res) => {
             updateFields.overallPaid = order.totalAmount;
             updateFields.paymentStatus = 'Paid';
             updateFields.isFullPaidAmount = true;
+            updateFields.isPending = true;
     
             await NotificationModel.create({
             customerId: order.customerId,

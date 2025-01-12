@@ -8,8 +8,42 @@
     text-align: start;
     margin-bottom: 20px;
 }
+.admin-inventory-report-container .input-with-icons{
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
 
-.logo-inventory-report{
+.admin-inventory-report-container .input-line{
+    width: 100%;
+    padding-right: 60px;
+}
+
+.admin-inventory-report-container .icon{
+    position: absolute;
+    right: 0;
+    margin-right: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #007bff;
+    transition: color 0.3s;
+    margin-top: 10px;
+}
+
+.admin-inventory-report-container .check-icon{
+    right: 32px;
+}
+
+.admin-inventory-report-container .times-icon{
+    right: 8px;
+}
+
+.admin-inventory-report-container .icon:hover{
+    color: #0056b3;
+}
+
+.admin-inventory-report-container .logo-inventory-report{
     width: 160px;
     object-fit: contain;
 }

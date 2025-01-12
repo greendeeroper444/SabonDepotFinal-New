@@ -9,9 +9,12 @@ import AdminModalProductsEditComponent from '../../../components/AdminComponents
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { orderDate } from '../../../utils/OrderUtils';
 
 
 function AdminFinishedProductPage() {
+    const [batches, setBatches] = useState([]);
+    const [selectedBatch, setSelectedBatch] = useState(null);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,16 +32,57 @@ function AdminFinishedProductPage() {
         notInStock: 0
     });
     const [selectedCategory, setSelectedCategory] = useState('');
+
+    const categories = [...new Set(products.map((product) => product.category))];
+
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(event.target.value);
+    };
+
+    const filteredProducts = selectedCategory
+    ? products.filter((product) => product.category === selectedCategory)
+    : products;
+
+    //display/get product data
+    const fetchProducts = async() => {
+        try {
+            const response = await axios.get('/adminProduct/getProductAdmin');
     
-        const categories = [...new Set(products.map((product) => product.category))];
+            //extract unique batch names from the response data
+            const uniqueBatches = [...new Set(response.data.map((product) => product.batch))];
     
-        const handleCategoryChange = (event) => {
-            setSelectedCategory(event.target.value);
-        };
+            setBatches(uniqueBatches);
     
-        const filteredProducts = selectedCategory
-        ? products.filter((product) => product.category === selectedCategory)
-        : products;
+            //sort products by quantity
+            const sortedProducts = response.data.sort((a, b) => a.quantity - b.quantity);
+            setProducts(sortedProducts);
+            setLoading(false);
+        } catch (error) {
+            setError(error);
+            setLoading(false);
+        }
+    };
+    
+
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    //fetch products for a selected batch
+    const fetchBatchProducts = async(batch) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`/adminProduct/getBatchProductAdmin?batch=${batch}`);
+            setProducts(response.data);
+            setSelectedBatch(batch);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         const fetchSummaryData = async() => {
@@ -54,8 +98,8 @@ function AdminFinishedProductPage() {
     }, []);
 
 
-     //generate PDF report
-     const handleGenerateReport = () => {
+    //generate PDF report
+    const handleGenerateReport = () => {
         const doc = new jsPDF();
     
         //title
@@ -140,30 +184,6 @@ function AdminFinishedProductPage() {
         setProductIdToDelete(null);
     };
 
-
-    //display/get product data
-    const fetchProducts = async() => {
-        try {
-            const response = await axios.get('/adminProduct/getProductAdmin');
-            
-            //sort products by quantity in ascending order
-            const sortedProducts = response.data.sort((a, b) => a.quantity - b.quantity);
-            
-            setProducts(sortedProducts);
-            setLoading(false);
-        } catch (error) {
-            setError(error);
-            setLoading(false);
-        }
-    };
-
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    
-
     const handleAddProductClick = () => {
         setIsModalOpen(true);
     };
@@ -238,6 +258,56 @@ function AdminFinishedProductPage() {
 
         </div>
 
+        <div>
+            {
+                batches.length > 0 ? (
+                    <>
+                        {/* all Batch Button */}
+                        <button
+                        onClick={() => {
+                            setSelectedBatch(null);
+                            fetchProducts();
+                        }}
+                        style={{
+                            margin: '0 10px',
+                            padding: '10px 20px',
+                            backgroundColor: selectedBatch === null ? 'green' : 'lightgray',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                        }}
+                        >
+                            All Batch
+                        </button>
+                        
+                        <br />
+                        <br />
+                        {/*individual Batch Buttons */}
+                        {
+                            batches.map((batch) => (
+                                <button
+                                    key={batch}
+                                    onClick={() => fetchBatchProducts(batch)}
+                                    style={{
+                                        margin: '0 10px',
+                                        padding: '10px 20px',
+                                        backgroundColor: selectedBatch === batch ? 'green' : 'lightgray',
+                                        color: 'white',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {batch}
+                                </button>
+                            ))
+                        }
+                    </>
+                ) : (
+                    <p>Loading batches...</p>
+                )
+            }
+        </div>
+
         <div className='admin-finished-product-controls'>
             <div>Products</div>
             <div>
@@ -272,6 +342,7 @@ function AdminFinishedProductPage() {
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Availability</th>
+                            <th>Expiration</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -291,11 +362,12 @@ function AdminFinishedProductPage() {
                                     </td>
                                     <td>{product.category}</td>
                                     <td>{product.sizeUnit.slice(0, 1)} - {product.productSize}</td>
-                                    <td>{`₱${product.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</td>
+                                    <td>{product.price}</td>
                                     <td>{product.quantity}</td>
                                     <td className={product.quantity > 0 ? (product.quantity > product.stockLevel ? 'in-stock' : 'low-stock') : 'out-of-stock'}>
                                         {product.quantity > 0 ? (product.quantity > product.stockLevel ? 'In stock' : 'Low stock') : 'Out of stock'}
                                     </td>
+                                    <td>{`${orderDate(product.expirationDate)}`}</td>
                                     <td className='actions-tbody'>
                                         <button className='button-edit-icon'
                                         onClick={() => handleEditProductClick(product._id)}

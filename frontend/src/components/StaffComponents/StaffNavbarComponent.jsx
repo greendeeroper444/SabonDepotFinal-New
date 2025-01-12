@@ -14,86 +14,54 @@ function StaffNavbarComponent() {
     const navigate = useNavigate();
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [notificationDropdownVisible, setNotificationDropdownVisible] = useState(false);
-    const [stockNotifications, setStockNotifications] = useState([]);
-    const [staffNotifications, setStaffNotifications] = useState([]);
+    const [orderNotifications, setOrderNotifications] = useState([]);
+    const [expirationNotifications, setExpirationNotifications] = useState([]);
+    const [lowStockNotifications, setLowStockNotifications] = useState([]);
+
+    //fetch order-related notifications
+    const fetchOrderNotifications = async() => {
+        try {
+            const response = await axios.get('/adminNotifications/getNotificationsOrderAdmin');
+            setOrderNotifications(response.data);
+        } catch (error) {
+            console.error('Error fetching order notifications:', error);
+        }
+    };
+
+    //fetch general admin (expiration) notifications
+    const fetchAdminNotifications = async() => {
+        try {
+            const response = await axios.get('/adminNotifications/getNotificationsAdmin');
+            setExpirationNotifications(response.data);
+        } catch (error) {
+            console.error('Error fetching expiration notifications:', error);
+        }
+    };
+
+    //fetch low-stock product notifications
+    const fetchLowStockNotifications = async() => {
+        try {
+            const response = await axios.get('/adminProduct/getOutOfStockProductsAdmin');
+            const lowStockProducts = response.data;
+            const notifications = lowStockProducts.map((product) => ({
+                message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
+                isRead: false,
+            }));
+            setLowStockNotifications(notifications);
+        } catch (error) {
+            console.error('Error fetching low-stock notifications:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchStockNotifications = async() => {
-            try {
-                const response = await axios.get('/staffProduct/getOutOfStockProducts');
-                const notifications = response.data.map(product => ({
-                    message: `${product.productName} (${product.sizeUnit.slice(0, 1)} - ${product.productSize}) is almost sold out! Only ${product.quantity} left.`,
-                    link: '/staff/products',
-                }));
-                setStockNotifications(notifications);
-            } catch (error) {
-                console.error(error);
-            }
+        const fetchAllNotifications = async () => {
+            await fetchOrderNotifications();
+            await fetchAdminNotifications();
+            await fetchLowStockNotifications();
         };
 
-        const fetchStaffNotifications = async() => {
-            try {
-                const response = await axios.get('/staffNotifications/getNotificationsStaff');
-                const notifications = response.data.map(notification => ({
-                    _id: notification._id,
-                    message: notification.message,
-                    link: `/staff/orders/details/${notification.orderId}`,
-                    isRead: notification.isRead,
-                }));
-                setStaffNotifications(notifications);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        
-        fetchStockNotifications();
-        fetchStaffNotifications();
+        fetchAllNotifications();
     }, []);
-
-    const handleNotificationClick = async(id, index, type) => {
-        if(!id){
-            console.error('Notification ID is undefined.');
-            return;
-        }
-    
-        try {
-            await axios.put(`/staffNotifications/markNotificationAsRead/${id}`);
-            console.log('Notification ID:', id);
-    
-            //update the state to reflect the change
-            if(type === 'staff'){
-                setStaffNotifications((prev) =>
-                    prev.map((notification, i) =>
-                        i === index ? {...notification, isRead: true} : notification
-                    )
-                );
-            }else if(type === 'stock'){
-                setStockNotifications((prev) =>
-                    prev.map((notification, i) =>
-                        i === index ? {...notification, isRead: true} : notification
-                    )
-                );
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    
-    
-
-    //event handler for confirmation logout
-    const handleConfirmLogout = async() => {
-        try {
-            const response = await axios.post('/staffAuth/logoutStaff');
-            if(response.data.message){
-                toast.success(response.data.message);
-            }
-            navigate('/admin-staff-login');
-        } catch (error) {
-            console.error(error);
-            toast.error('Logout failed');
-        }
-    };
 
     const toggleDropdown = () => {
         setDropdownVisible(!dropdownVisible);
@@ -103,10 +71,57 @@ function StaffNavbarComponent() {
         setNotificationDropdownVisible(!notificationDropdownVisible);
     };
 
-    // const handleNotificationClick = () => {
-    //     setNotificationDropdownVisible(false);
-    // };
+    const handleConfirmLogout = async() => {
+        try {
+            const response = await axios.post('/adminAuth/logoutAdmin');
+            if (response.data.message) {
+                toast.success(response.data.message);
+            }
+            navigate('/admin-staff-login');
+        } catch (error) {
+            console.error(error);
+            toast.error('Logout failed');
+        }
+    };
 
+    //handle notification click to toggle isRead status and update in the backend
+    const handleNotificationClick = async(index, type) => {
+        //set isRead to true when clicked(permanent read)
+        const allNotifications = [
+            ...orderNotifications,
+            ...expirationNotifications,
+            ...lowStockNotifications,
+        ];
+    
+        const notification = allNotifications[index];
+        notification.isRead = true; //ensure the notification is marked as read permanently
+    
+        //update state to reflect the changes
+        setOrderNotifications([...orderNotifications]);
+        setExpirationNotifications([...expirationNotifications]);
+        setLowStockNotifications([...lowStockNotifications]);
+    
+        setNotificationDropdownVisible(false);
+    
+        try {
+            //send request to backend to update the notification status permanently
+            await axios.put(`/adminNotifications/updateNotificationStatus/${notification._id}`, {
+                isRead: true,
+                notificationType: type,  //send type ('order', 'expiration', or 'lowStock')
+            });
+        } catch (error) {
+            console.error('Error updating notification status:', error);
+            toast.error('Failed to update notification status');
+        }
+    };
+    
+
+    //combine all notifications
+    const allNotifications = [
+        ...orderNotifications.map(notification => ({ type: 'order', ...notification })),
+        ...expirationNotifications.map(notification => ({ type: 'expiration', ...notification })),
+        ...lowStockNotifications.map(notification => ({ type: 'lowStock', ...notification }))
+    ];
 
   return (
     <nav className='staff-navbar'>
@@ -137,7 +152,7 @@ function StaffNavbarComponent() {
                         />
                         {/* <span className='notification-count'>{notifications.length}</span> */}
                         <span className='notification-count'>
-                            {stockNotifications.length + staffNotifications.length}
+                            {allNotifications.filter(notification => !notification.isRead).length}
                         </span>
                         {/* {
                             notificationDropdownVisible && (
@@ -168,44 +183,78 @@ function StaffNavbarComponent() {
                                 <div className='notification-dropdown'>
                                     <h4>Notifications</h4>
                                     {
-                                        staffNotifications.length > 0 ? (
-                                            staffNotifications.map((notification, index) => (
-                                                <div
-                                                key={`staff-${index}`}
-                                                className={`notification-items ${notification.isRead ? 'read' : 'unread'}`}
-                                                onClick={() => handleNotificationClick(notification._id, index, 'staff')}
-                                                >
-                                                    <Link
-                                                    to={notification.link}
-                                                    className='notification-item'
-                                                    >
-                                                        {notification.message}
-                                                    </Link>
-                                                </div>
-                                            
-                                            ))
+                                        allNotifications.length > 0 ? (
+                                            <>
+                                                {/* order notifications section */}
+                                                {
+                                                    orderNotifications.map((notification, index) => {
+                                                        const paymentMethod = notification.orderId?.paymentMethod;
+                                                        const orderLink =
+                                                            paymentMethod === 'Pick Up'
+                                                                ? `/staff/orders-pickup/details/${notification.orderId._id}`
+                                                                : `/staff/orders/details/${notification.orderId._id}`;
+
+                                                        return (
+                                                            <div key={index} className='notification-items'>
+                                                                <Link 
+                                                                to={orderLink}
+                                                                className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}
+                                                                onClick={() => handleNotificationClick(index, 'order')}
+                                                                >
+                                                                    {notification.message}
+                                                                </Link>
+                                                            </div>
+                                                        );
+                                                    })
+                                                }
+
+
+                                                {/* expiration notifications section */}
+                                                {
+                                                    expirationNotifications.length > 0 && (
+                                                        <>
+                                                            <h4>Expiration Notifications</h4>
+                                                            {
+                                                                expirationNotifications.map((notification, index) => (
+                                                                    <div key={index} className='notification-items'>
+                                                                        <Link 
+                                                                        to='/staff/products' 
+                                                                        className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}
+                                                                        onClick={() => handleNotificationClick(index, 'expiration')}
+                                                                        >
+                                                                            {notification.message}
+                                                                        </Link>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+
+                                                {/* low stock notifications section */}
+                                                {
+                                                    lowStockNotifications.length > 0 && (
+                                                        <>
+                                                            <h4>Low Stock Notifications</h4>
+                                                            {
+                                                                lowStockNotifications.map((notification, index) => (
+                                                                    <div key={index} className='notification-items'>
+                                                                        <Link 
+                                                                        to='/staff/products' 
+                                                                        className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}
+                                                                        onClick={() => handleNotificationClick(index, 'lowStock')}
+                                                                        >
+                                                                            {notification.message}
+                                                                        </Link>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                            </>
                                         ) : (
-                                            <div className='notification-item'>No staff notifications</div>
-                                        )
-                                    }
-                                    <br />
-                                    <br />
-                                    <h4>Stock Notifications</h4>
-                                    {
-                                        stockNotifications.length > 0 ? (
-                                            stockNotifications.map((notification, index) => (
-                                                <div key={`stock-${index}`} className='notification-items'>
-                                                    <Link
-                                                    to={notification.link}
-                                                    className='notification-item'
-                                                    onClick={handleNotificationClick}
-                                                    >
-                                                        {notification.message}
-                                                    </Link>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className='notification-item'>No stock notifications</div>
+                                            <div className='notification-item'>No new notifications</div>
                                         )
                                     }
                                 </div>

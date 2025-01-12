@@ -1,28 +1,28 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react';
 
-export default function UseFetchProductsHook(selectedCategory) {
+export default function UseFetchProductsHook(selectedCategory, selectedSizeUnit) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchProducts = async(category = '') => {
-        try {
-            const response = await axios.get('/customerProduct/getProductCustomer', {
-                params: {category}
-            });
-            const productData = Array.isArray(response.data) ? response.data : [];
-            setProducts(productData);
-            setLoading(false);
-        } catch (error) {
-            setError(error);
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchProducts(selectedCategory);
-    }, [selectedCategory]);
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get('/customerProduct/getProductCustomer', {
+                    params: {category: selectedCategory, sizeUnit: selectedSizeUnit},
+                });
+                setProducts(response.data);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return {products, loading, error};
+        fetchProducts();
+    }, [selectedCategory, selectedSizeUnit]);
+
+    return {products, loading, error};
 }

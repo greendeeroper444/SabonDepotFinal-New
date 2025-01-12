@@ -1,9 +1,17 @@
 const mongoose = require('mongoose');
 
 const TotalSaleSchema = new mongoose.Schema({
+    imageUrl: {
+        type: String,
+        required: true
+    },
     productName: {
         type: String,
         required: true,
+    },
+    price: {
+        type: Number,
+        required: true
     },
     totalProduct: {
         type: Number,
@@ -32,9 +40,17 @@ const BestSellingSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    imageUrl: {
+        type: String,
+        required: true
+    },
     productName: {
         type: String,
         required: true,
+    },
+    price: {
+        type: Number,
+        required: true
     },
     totalProduct: {
         type: Number,

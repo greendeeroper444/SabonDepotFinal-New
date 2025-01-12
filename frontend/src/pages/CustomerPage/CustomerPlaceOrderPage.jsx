@@ -12,9 +12,6 @@ function CustomerPlaceOrderPage() {
     const {order, loading, error} = UseOrderDetailsHook(customerId, orderId);
     const [isInvoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
-
-    const pendingDate = new Date();
-
     if(loading){
         return <div>Loading...</div>;
     }

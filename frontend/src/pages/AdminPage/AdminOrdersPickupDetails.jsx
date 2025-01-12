@@ -93,7 +93,7 @@ function AdminOrdersPickupDetailsPage() {
                 <h1>Order # {order._id}</h1>
                 <div className='order-status'>
                     {
-                        order.isReceived ? (
+                        order.isPickedUp ? (
                             <span>Order Completed</span>
                         ) : (
                             <span>Order Not Completed</span>

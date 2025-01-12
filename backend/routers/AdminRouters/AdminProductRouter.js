@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadProductAdmin, getProductAdmin, deleteProductAdmin, editProductAdmin, getEditProductAdmin, getProductSummaryAdmin, getOutOfStockProductsAdmin, getProductsAdmin, getUniqueCategoriesAdmin } = require('../../controllers/AdminControllers/AdminProductController');
+const { uploadProductAdmin, getProductAdmin, deleteProductAdmin, editProductAdmin, getEditProductAdmin, getProductSummaryAdmin, getOutOfStockProductsAdmin, getProductsAdmin, getUniqueCategoriesAdmin, getBatchProductAdmin } = require('../../controllers/AdminControllers/AdminProductController');
 const router = express.Router();
 
 
@@ -14,5 +14,7 @@ router.get('/getOutOfStockProductsAdmin', getOutOfStockProductsAdmin);
 
 router.get('/getProductsAdmin', getProductsAdmin);
 router.get('/getUniqueCategoriesAdmin', getUniqueCategoriesAdmin);
+
+router.get('/getBatchProductAdmin', getBatchProductAdmin);
 
 module.exports = router;

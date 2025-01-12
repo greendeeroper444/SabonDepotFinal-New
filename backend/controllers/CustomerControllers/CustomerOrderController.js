@@ -9,6 +9,8 @@ const { getInventoryReport, getSalesReport } = require("../AdminControllers/Admi
 const mongoose = require('mongoose');
 const NotificationStaffModel = require("../../models/StaffModels/NotificationStaffModel");
 const NotificationModel = require("../../models/NotificationModel");
+const AdminNotificationModel = require("../../models/AdminModels/AdminNotificationModel");
+const AdminNotificationOrderModel = require("../../models/AdminModels/AdminNotificationOrderModel");
 
 //set up storage engine
 const storage = multer.diskStorage({
@@ -801,7 +803,9 @@ const createOrderCustomer = async(req, res) => {
                 );
             } else{
                 await TotalSaleModel.create({
+                    imageUrl: item.productId.imageUrl,
                     productName: item.productId.productName,
+                    price: item.productId.price,
                     totalProduct: 1,
                     totalSales: item.productId.price * item.quantity,
                     quantitySold: item.quantity,
@@ -819,9 +823,11 @@ const createOrderCustomer = async(req, res) => {
             } else{
                 await BestSellingModel.create({
                     productId: item.productId._id,
+                    imageUrl: item.productId.imageUrl,
                     productName: item.productId.productName,
                     totalSales: item.finalPrice * item.quantity,
                     quantitySold: item.quantity,
+                    price: item.productId.price,
                     sizeUnit: item.productId.sizeUnit,
                     productSize: item.productId.productSize,
                     desciption: item.productId.description,
@@ -852,6 +858,20 @@ const createOrderCustomer = async(req, res) => {
             );
         }));
 
+
+
+        //create notifications for each item
+        const notifications = cartItems.map(item => ({
+            customerId,
+            orderId: order._id,
+            productId: item.productId._id,
+            productName: item.productId.productName,
+            message: `${parsedBillingDetails.firstName} ${parsedBillingDetails.lastName} placed an order for ${item.productId.productName}.`,
+        }));
+
+        //save notifications to the database
+        await AdminNotificationOrderModel.insertMany(notifications);
+        
         //remove selected items from the cart
         await CartModel.deleteMany({
             _id: {$in: selectedItems},

@@ -58,8 +58,10 @@ function AdminDirectOrdersWalkinContentComponent({
                                     {shouldShowDiscount && <div className='discount-badge'>{product.discountPercentage}% OFF</div>}
                                 </div>
                                 <div className='details-list'>
-                                    <h5>{product.productName}</h5>
+                                    <h5>{product.productName} ({product.productSize})</h5>
                                     <span>{product.category}</span>
+                                    <br />
+                                    <span>{product.quantity} quantity</span>
                                     <h6>{`₱ ${finalPrice}`}</h6>
                                 </div>
                             </div>

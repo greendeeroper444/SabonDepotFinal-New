@@ -310,7 +310,7 @@ function StaffModalProductsAddComponent({isOpen, onClose, fetchProducts}) {
                 </div>
             </div>
             <div className='label-text'>
-                <label>DISCOUNTED DATE:</label>
+                <label>DISCOUNT END:</label>
                 <div>
                     <input
                     type="date"

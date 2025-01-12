@@ -354,6 +354,10 @@ function SalesReportPage() {
 
   return (
     <div className='sales-report-container'>
+        <br />
+        <br />
+        <br />
+        <br />
         <header className='sales-report-header'>
             <div className='company-info'>
                 <img src={logoDepot} alt="Logo" className="logo" />

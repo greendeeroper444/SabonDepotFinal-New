@@ -24,19 +24,19 @@ const CustomerAuthSchema = new mongoose.Schema({
     },
     province: {
         type: String,
-        required: true
+        default: ''
     },
     city: {
         type: String,
-        required: true
+        default: ''
     },
     barangay: {
         type: String,
-        required: true
+        default: ''
     },
     purokStreetSubdivision: {
         type: String,
-        required: true
+        default: ''
     },
     emailAddress: {
         type: String,
