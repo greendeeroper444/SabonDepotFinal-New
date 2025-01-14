@@ -17,7 +17,7 @@ function InventoryReport() {
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedDates, setSelectedDates] = useState([]);
+    const [selectedDates, setSelectedDates] = useState([new Date(), new Date()]);
     const [groupedReports, setGroupedReports] = useState({});
     const [inputFields, setInputFields] = useState({});
     const [activeInput, setActiveInput] = React.useState(null);
@@ -93,7 +93,7 @@ function InventoryReport() {
 
     const handleUpdateNames = async(reportId) => {
         try {
-            const { preparedBy, checkedBy, receivedBy } = inputFields[reportId];
+            const {preparedBy, checkedBy, receivedBy} = inputFields[reportId];
             const response = await axios.put('/adminReports/updateInventoryReportNames', {
                 reportId,
                 preparedBy,
@@ -120,6 +120,21 @@ function InventoryReport() {
             ...prev,
             [reportId]: {...prev[reportId], [field]: ''},
         }));
+    };
+
+
+    const getHighlightedDates = () => {
+        if(selectedDates.length < 2) return [];
+        const [startDate, endDate] = selectedDates.map(date => new Date(date));
+        const highlighted = [];
+        const currentDate = new Date(startDate);
+    
+        while(currentDate <= endDate){
+            highlighted.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+    
+        return highlighted;
     };
 
     const handleGenerateReport = () => {
@@ -231,13 +246,14 @@ function InventoryReport() {
             <p>Date: {selectedDates.length === 2 ? `${new Date(selectedDates[0]).toLocaleDateString()} - ${new Date(selectedDates[1]).toLocaleDateString()}` : ''}</p>
         </div>
         <DatePicker
-            value={selectedDates}
-            onChange={setSelectedDates}
-            placeholder='Select date range'
-            range
-            format='MMM DD, YYYY'
-            className='date-picker-input'
-            maxDate={new Date()}
+        value={selectedDates}
+        onChange={setSelectedDates}
+        placeholder='Select dates'
+        range={true}
+        format='MMM DD, YYYY'
+        className='date-picker-input'
+        maxDate={new Date()}
+        highlight={getHighlightedDates()}
         />
         {
             loading ? (

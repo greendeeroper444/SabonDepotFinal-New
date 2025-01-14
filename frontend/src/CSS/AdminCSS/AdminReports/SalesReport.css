@@ -82,3 +82,67 @@
     font-weight: bold;
 }
   
+.sales-report-container .admin-sales-report-footer{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.sales-report-container .admin-sales-report-footer p{
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+.sales-report-container .admin-sales-report-footer div{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.sales-report-container .admin-sales-report-footer .input-line{
+    border: none;
+    border-bottom: 1px solid #000;
+    width: 200px;
+    margin-top: 5px;
+    padding: 5px;
+    outline: none;
+}
+
+
+
+
+
+.sales-report-container .input-with-icons{
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sales-report-container .input-line{
+    width: 100%;
+    padding-right: 60px;
+}
+
+.sales-report-container .icon{
+    position: absolute;
+    right: 0;
+    margin-right: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #007bff;
+    transition: color 0.3s;
+    margin-top: 10px;
+}
+
+.sales-report-container .check-icon{
+    right: 32px;
+}
+
+.sales-report-container .times-icon{
+    right: 8px;
+}
+
+.sales-report-container .icon:hover{
+    color: #0056b3;
+}

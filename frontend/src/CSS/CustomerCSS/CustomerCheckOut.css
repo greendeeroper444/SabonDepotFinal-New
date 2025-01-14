@@ -168,6 +168,7 @@
 .customer-checkout-content .form-control{
     margin-bottom: 20px;
     flex: 1;
+    box-sizing: border-box;
 }
 .billing-details{
     border: 1px solid #ddd;
@@ -546,3 +547,19 @@
     color: #555;
 }
   
+
+
+@media (max-width: 900px){
+    .customer-checkout-content{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px){
+    .customer-checkout-content .form-group{
+        flex-direction: column;
+        display: block;
+        justify-content: none;
+        gap: 0px;
+    }
+}

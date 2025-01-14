@@ -50,23 +50,23 @@ function CustomerShopProductDetails() {
         ? getDaysLeftMessage(product.discountedDate)
         : null;
 
-    const handleCheckout = (product) => {
-        navigate(`/direct-checkout/${customer?._id}`, {
-            state: {
-                selectedItems: [
-                    {
-                        productId: {
-                            _id: product._id,
-                            productName: product.productName,
-                            price: product.price,
-                            discountedPrice: product.discountedPrice,
+        const handleCheckout = (product) => {
+            navigate(`/direct-checkout/${customer?._id}`, {
+                state: {
+                    selectedItems: [
+                        {
+                            productId: {
+                                _id: product._id,
+                                productName: product.productName,
+                                price: product.price,
+                                discountedPrice: product.discountedPrice,
+                            },
+                            quantity: quantity,
                         },
-                        quantity: quantity,
-                    },
-                ],
-            },
-        });
-    };
+                    ],
+                },
+            });
+        };
     
     
     
@@ -176,7 +176,7 @@ function CustomerShopProductDetails() {
                                         style={{ cursor: 'pointer' }}
                                         >
                                             <img 
-                                            src={`http://localhost:8000/${relatedProduct.imageUrl}`} 
+                                            src={`${import.meta.env.VITE_BASE_URL}${relatedProduct.imageUrl}`} 
                                             alt={relatedProduct.productName} 
                                             />
                                         </li>
@@ -187,7 +187,7 @@ function CustomerShopProductDetails() {
 
                         <div className='shop-products-right'>
                             <div className='product-image-container'>
-                                <img src={`http://localhost:8000/${product.imageUrl}`} alt={product.productName} />
+                                <img src={`${import.meta.env.VITE_BASE_URL}${product.imageUrl}`} alt={product.productName} />
                                 {
                                     shouldShowDiscount && (
                                         <div className='discount-badge'>
@@ -301,7 +301,7 @@ function CustomerShopProductDetails() {
                                             <button className='add-to-cart' 
                                             onClick={handleAddToCart}
                                             >Add To Cart</button>
-                                            {/* <button className='check-out' onClick={() => handleCheckout(product)}>Checkout</button> */}
+                                            <button className='check-out' onClick={() => handleCheckout(product)}>Checkout</button>
                                         </div>
                                     )
                                 }

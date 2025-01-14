@@ -890,6 +890,188 @@ const createOrderCustomer = async(req, res) => {
     }
 };
 
+const directCheckoutCustomer = async(req, res) => {
+    try {
+        const {
+            customerId,
+            paymentMethod,
+            productDetails,
+            quantity,
+            billingDetails,
+            pickupDate,
+            pickupTime,
+        } = req.body;
+
+        console.log('Request Body:', req.body);
+
+        if(!productDetails || !productDetails._id){
+            return res.status(400).json({ 
+                message: 'Invalid product details. Product ID is required.' 
+            });
+        }
+
+        //parse and validate billing details
+        let parsedBillingDetails = {};
+        try {
+            parsedBillingDetails =
+                typeof billingDetails === 'string' ? JSON.parse(billingDetails) : billingDetails;
+        } catch (error) {
+            return res.status(400).json({ message: 'Invalid billing details format.', error: error.message });
+        }
+
+        if (
+            !parsedBillingDetails.firstName ||
+            !parsedBillingDetails.lastName ||
+            !parsedBillingDetails.contactNumber ||
+            !parsedBillingDetails.province ||
+            !parsedBillingDetails.city ||
+            !parsedBillingDetails.barangay ||
+            !parsedBillingDetails.purokStreetSubdivision ||
+            !parsedBillingDetails.emailAddress ||
+            !parsedBillingDetails.clientType
+        ) {
+            return res.status(400).json({ message: 'Billing details are required.' });
+        }
+
+        //find product
+        const product = await ProductModel.findById(productDetails._id);
+        if(!product){
+            return res.status(404).json({ 
+                message: 'Product not found.' 
+            });
+        }
+        if(product.quantity < quantity) {
+            return res.status(400).json({ 
+                message: 'Insufficient stock.' 
+            });
+        }
+
+        //calculate price
+        const isNewCustomer = (await CustomerAuthModel.findById(customerId)).isNewCustomer;
+        const discountedPrice = product.discountedPrice || product.price;
+        const finalPrice = isNewCustomer
+            ? discountedPrice - discountedPrice * 0.3
+            : discountedPrice;
+        const totalAmount = finalPrice * quantity;
+
+        //create order
+        const order = new OrderModel({
+            customerId,
+            items: [
+                {
+                    productId: product._id,
+                    productName: product.productName,
+                    price: product.price,
+                    discountedPrice,
+                    finalPrice,
+                    quantity,
+                },
+            ],
+            totalAmount,
+            paymentMethod,
+            billingDetails: parsedBillingDetails,
+            paymentStatus: 'Unpaid',
+            orderStatus: 'Pending',
+            pickupDate: paymentMethod === 'Pick Up' ? pickupDate : undefined,
+            pickupTime: paymentMethod === 'Pick Up' ? pickupTime : undefined,
+        });
+
+        await order.save();
+
+        //update product quantities and handle related models
+        await Promise.all(
+            order.items.map(async (item) => {
+                const {productId, quantity, productName, price, finalPrice} = item;
+
+                try {
+                    //update product stock
+                    await ProductModel.findByIdAndUpdate(productId, {
+                        $inc: { quantity: -quantity },
+                    });
+
+                    //handle total sales
+                    const today = new Date();
+                    today.setUTCHours(0, 0, 0, 0);
+
+                    const existingTotalSale = await TotalSaleModel.findOne({
+                        productName,
+                        day: today,
+                    });
+
+                    if(existingTotalSale){
+                        await TotalSaleModel.updateOne(
+                            {_id: existingTotalSale._id},
+                            {
+                                $inc: {
+                                    totalProduct: 1,
+                                    totalSales: price * quantity,
+                                    quantitySold: quantity,
+                                },
+                            }
+                        );
+                    } else {
+                        await TotalSaleModel.create({
+                            productName,
+                            price,
+                            totalProduct: 1,
+                            totalSales: price * quantity,
+                            quantitySold: quantity,
+                            day: today,
+                        });
+                    }
+
+                    //handle best-selling records
+                    const bestSelling = await BestSellingModel.findOne({productId});
+                    if(bestSelling){
+                        bestSelling.totalProduct += 1;
+                        bestSelling.totalSales += finalPrice * quantity;
+                        bestSelling.quantitySold += quantity;
+                        bestSelling.lastSoldAt = Date.now();
+                        await bestSelling.save();
+                    } else{
+                        await BestSellingModel.create({
+                            productId,
+                            productName,
+                            price,
+                            totalSales: finalPrice * quantity,
+                            quantitySold: quantity,
+                            lastSoldAt: Date.now(),
+                        });
+                    }
+
+                    //generate inventory and sales reports
+                    await getInventoryReport(productId, productName, '', '', '', quantity, true);
+                    await getSalesReport(productId, productName, '', '', price, quantity, true);
+                } catch (err) {
+                    console.error(`Error updating product data for ${productId}:`, err.message);
+                }
+            })
+        );
+
+        //create notifications
+        const notifications = order.items.map((item) => ({
+            customerId,
+            orderId: order._id,
+            productId: item.productId,
+            productName: item.productName,
+            message: `${parsedBillingDetails.firstName} ${parsedBillingDetails.lastName} placed an order for ${item.productName}.`,
+        }));
+
+        await AdminNotificationOrderModel.insertMany(notifications);
+
+        res.status(201).json({
+            message: 'Order created successfully',
+            orderId: order._id,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ 
+            message: 'Server error', error: error.message 
+        });
+    }
+};
+
+
 
 const getOrderCustomer = async(req, res) => {
     const {customerId, orderId} = req.params;
@@ -1030,5 +1212,6 @@ module.exports = {
     getOrderCustomer,
     getAllOrdersCustomer,
     uploadProof,
-    receivedButton
+    receivedButton,
+    directCheckoutCustomer
 }

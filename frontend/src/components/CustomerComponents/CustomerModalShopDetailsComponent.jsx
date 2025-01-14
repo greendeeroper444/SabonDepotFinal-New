@@ -82,7 +82,7 @@ function CustomerModalShopDetailsComponent({isOpen, onClose, cartItems, setCartI
                         ) : (
                             Array.isArray(cartItems) && cartItems.map((cartItem) => (
                                 <div key={cartItem._id} className='customer-modal-content-group'>
-                                    <img src={`http://localhost:8000/${cartItem.productId.imageUrl}`} alt="" className='customer-modal-product-items' />
+                                    <img src={`${import.meta.env.VITE_BASE_URL}${cartItem.productId.imageUrl}`} alt="" className='customer-modal-product-items' />
                                     <div className='customer-modal-product-items-content'>
                                         <span>{cartItem.productId.productName}</span>
                                         <p>

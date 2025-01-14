@@ -1,5 +1,5 @@
 const express = require('express');
-const { createDailyInventoryReportAdmin, getInventoryReportsAdmin, createDailySalesReportAdmin, getSalesReportsAdmin, updateInventoryReportNames } = require('../../controllers/AdminControllers/AdminReportController');
+const { createDailyInventoryReportAdmin, getInventoryReportsAdmin, createDailySalesReportAdmin, getSalesReportsAdmin, updateInventoryReportNames, updateSalesReportNames } = require('../../controllers/AdminControllers/AdminReportController');
 
 const router = express.Router();
 
@@ -11,5 +11,6 @@ router.put('/updateInventoryReportNames', updateInventoryReportNames);
 // //routes for sales report
 // router.post('/createDailySalesReportAdmin', createDailySalesReportAdmin);
 router.get('/getSalesReportsAdmin', getSalesReportsAdmin);
+router.put('/updateSalesReportNames', updateSalesReportNames);
 
 module.exports = router;

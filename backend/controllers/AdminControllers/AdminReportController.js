@@ -178,6 +178,37 @@ const updateInventoryReportNames = async(req, res) => {
     }
 };
 
+const updateSalesReportNames = async(req, res) => {
+    const {reportId, preparedBy, checkedBy, receivedBy} = req.body;
+
+    try {
+        const report = await SalesReportModel.findById(reportId);
+
+        if(!report){
+            return res.status(404).json({ 
+                message: 'Report not found' 
+            });
+        }
+
+        //update the fields with new names
+        if(preparedBy) report.preparedBy = preparedBy;
+        if(checkedBy) report.checkedBy = checkedBy;
+        if(receivedBy) report.receivedBy = receivedBy;
+
+        //save the updated report
+        await report.save();
+
+        return res.json({ 
+            message: 'Report updated successfully' 
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Sever error' 
+        });
+    }
+};
+
 module.exports = {
     // createDailyInventoryReportAdmin,
     getInventoryReportsAdmin,
@@ -185,5 +216,6 @@ module.exports = {
     getSalesReportsAdmin,
     getInventoryReport,
     getSalesReport,
-    updateInventoryReportNames
+    updateInventoryReportNames,
+    updateSalesReportNames
 }

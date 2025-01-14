@@ -147,7 +147,7 @@ function AdminModalRefillingContentDetailsComponent({isOpen, onClose, cartItems,
                                 cartItem.productId ? (
                                     <div key={cartItem._id} className='customer-modal-content-group'>
                                         <img
-                                            src={`http://localhost:8000/${cartItem.productId.imageUrl}`}
+                                            src={`${import.meta.env.VITE_BASE_URL}${cartItem.productId.imageUrl}`}
                                             alt=''
                                             className='customer-modal-product-items'
                                         />

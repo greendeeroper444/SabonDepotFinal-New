@@ -84,7 +84,7 @@ export default function UseCheckOutHook(customerId, selectedItems = [], navigate
         toast.success('Pick-up details saved successfully!');
     };
 
-    const handlePlaceOrder = async () => {
+    const handlePlaceOrder = async() => {
     
         //validate billing details
         const missingFields = [];

@@ -143,7 +143,7 @@ function StaffSettingsPage() {
             <div className='staff-profile-content'>
                 <div className='staff-profile-info'>
                     <img
-                    src={previewImage || (profilePicture ? `http://localhost:8000/${profilePicture}` : customerDefaultProfilePicture)}
+                    src={previewImage || (profilePicture ? `${import.meta.env.VITE_BASE_URL}${profilePicture}` : customerDefaultProfilePicture)}
                     alt="Profile"
                     className='staff-profile-picture'
                     onClick={handleImageClick}

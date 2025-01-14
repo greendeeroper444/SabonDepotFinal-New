@@ -213,7 +213,7 @@ function AdminDashboardPage() {
                                         <td>{notification.productCode || 'N/A'}</td>
                                         <td className='product-name'>
                                             <img
-                                                src={`http://localhost:8000/${notification.imageUrl}`}
+                                                src={`${import.meta.env.VITE_BASE_URL}${notification.imageUrl}`}
                                                 alt={notification.productName || 'Product'}
                                                 className='notification-image'
                                             />
@@ -251,7 +251,7 @@ function AdminDashboardPage() {
                                     <div>
                                         <>
                                             <img
-                                            src={`http://localhost:8000/${product.imageUrl}`}
+                                            src={`${import.meta.env.VITE_BASE_URL}${product.imageUrl}`}
                                             alt={product.productName || 'Product'}
                                             />
                                             <strong>{product.productName}</strong>

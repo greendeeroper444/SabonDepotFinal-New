@@ -22,6 +22,8 @@ function StaffProductsPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedBatch, setSelectedBatch] = useState(null);
+    const [batches, setBatches] = useState([]);
 
     const categories = [...new Set(products.map((product) => product.category))];
 
@@ -32,6 +34,26 @@ function StaffProductsPage() {
     const filteredProducts = selectedCategory
     ? products.filter((product) => product.category === selectedCategory)
     : products;
+
+    //display/get product data
+    const fetchProducts = async() => {
+        try {
+            const response = await axios.get('/staffProduct/getProductStaff');
+    
+            //extract unique batch names from the response data
+            const uniqueBatches = [...new Set(response.data.map((product) => product.batch))];
+    
+            setBatches(uniqueBatches);
+    
+            //sort products by quantity
+            const sortedProducts = response.data.sort((a, b) => a.quantity - b.quantity);
+            setProducts(sortedProducts);
+            setLoading(false);
+        } catch (error) {
+            setError(error);
+            setLoading(false);
+        }
+    };
 
     //generate PDF report
     const handleGenerateReport = () => {
@@ -124,6 +146,19 @@ function StaffProductsPage() {
         setProductIdToArchive(null);
     };
 
+     //fetch products for a selected batch
+     const fetchBatchProducts = async(batch) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`/adminProduct/getBatchProductAdmin?batch=${batch}`);
+            setProducts(response.data);
+            setSelectedBatch(batch);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     //display/get product data
     // const fetchProducts = async() => {
@@ -136,20 +171,20 @@ function StaffProductsPage() {
     //         setLoading(false);
     //     }
     // };
-    const fetchProducts = async() => {
-        try {
-            const response = await axios.get('/staffProduct/getProductStaff');
+    // const fetchProducts = async() => {
+    //     try {
+    //         const response = await axios.get('/staffProduct/getProductStaff');
             
-            //sort products by quantity in ascending order
-            const sortedProducts = response.data.sort((a, b) => a.quantity - b.quantity);
+    //         //sort products by quantity in ascending order
+    //         const sortedProducts = response.data.sort((a, b) => a.quantity - b.quantity);
             
-            setProducts(sortedProducts);
-            setLoading(false);
-        } catch (error) {
-            setError(error);
-            setLoading(false);
-        }
-    };
+    //         setProducts(sortedProducts);
+    //         setLoading(false);
+    //     } catch (error) {
+    //         setError(error);
+    //         setLoading(false);
+    //     }
+    // };
 
     useEffect(() => {
         fetchProducts();
@@ -213,6 +248,57 @@ function StaffProductsPage() {
             <h2>PRODUCT LISTS</h2>
             <p>As of {currentDate}</p>
         </div>
+
+        <div>
+            {
+                batches.length > 0 ? (
+                    <>
+                        {/* all Batch Button */}
+                        <button
+                        onClick={() => {
+                            setSelectedBatch(null);
+                            fetchProducts();
+                        }}
+                        style={{
+                            margin: '0 10px',
+                            padding: '10px 20px',
+                            backgroundColor: selectedBatch === null ? 'green' : 'lightgray',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                        }}
+                        >
+                            All Batch
+                        </button>
+                        
+                        <br />
+                        <br />
+                        {/*individual Batch Buttons */}
+                        {
+                            batches.map((batch) => (
+                                <button
+                                    key={batch}
+                                    onClick={() => fetchBatchProducts(batch)}
+                                    style={{
+                                        margin: '0 10px',
+                                        padding: '10px 20px',
+                                        backgroundColor: selectedBatch === batch ? 'green' : 'lightgray',
+                                        color: 'white',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {batch}
+                                </button>
+                            ))
+                        }
+                    </>
+                ) : (
+                    <p>Loading batches...</p>
+                )
+            }
+        </div>
+        
         <div className='staff-products-controls'>
             <select onChange={handleCategoryChange} value={selectedCategory}>
                 <option value=''>All Categories</option>
@@ -259,7 +345,7 @@ function StaffProductsPage() {
                                 >
                                     <td>{product.productCode}</td>
                                     <td className='product-image-name'>
-                                        <img src={`http://localhost:8000/${product.imageUrl}`} alt={product.productName} />{' '}{product.productName}
+                                        <img src={`${import.meta.env.VITE_BASE_URL}${product.imageUrl}`} alt={product.productName} />{' '}{product.productName}
                                     </td>
                                     <td>{product.category}</td>
                                     <td>{product.sizeUnit.slice(0, 1)} - {product.productSize}</td>

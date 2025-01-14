@@ -190,6 +190,7 @@
     display: flex;
     align-items: center;
     border-radius: 10px;
+    justify-content: center;
     gap: 10px;
 }
 
@@ -288,6 +289,12 @@
 
 
 
+@media (max-width: 1224px){
+    .customer-shop-product-details-content .customer-shop-product-details-product-add-buttons{
+        display: flex;
+        flex-direction: column;
+    }
+}
 
 @media (max-width: 968px){
     .customer-shop-product-details-content{
@@ -296,7 +303,6 @@
     .customer-shop-product-details-content .customer-shop-product-details-content-left .shop-products-right{
         margin-right: 40px;
     }
-    
 }
 
 
