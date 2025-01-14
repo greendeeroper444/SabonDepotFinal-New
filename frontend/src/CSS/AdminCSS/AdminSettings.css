@@ -63,3 +63,13 @@
     background-color: red;
     border-radius: 50%;
 }
+
+
+@media (max-width: 768px) {
+    .settings-sidebar {
+        display: none;
+    }
+    .settings-content{
+        margin-left: 0px;
+    }
+}
